@@ -1860,8 +1860,10 @@ std::string SystemData::getCompatibleCoreNames(EmulatorFeatures::Features featur
 
 bool SystemData::isCheevosSupported()
 {
-	if (isCollection())
+	if (isCollection()){
+		LOG(LogDebug) << "Cheevos is not supported isColleciton = true ";
 		return false;
+	}
 
 	if (mIsCheevosSupported < 0)
 	{
@@ -1877,7 +1879,7 @@ bool SystemData::isCheevosSupported()
 
 			if (cheevosSystems.find(getName()) != cheevosSystems.cend())
 				mIsCheevosSupported = 1;
-
+			LOG(LogDebug) << "Cheevos is supported? : " << (mIsCheevosSupported != 0);
 			return mIsCheevosSupported != 0;
 		}
 
@@ -1893,7 +1895,7 @@ bool SystemData::isCheevosSupported()
 			}
 		}
 	}
-
+	LOG(LogDebug) << "Cheevos is supported? : " << (mIsCheevosSupported != 0);
 	return mIsCheevosSupported != 0;
 }
 

@@ -214,9 +214,13 @@ const bool FileData::getKidGame()
 
 const bool FileData::hasCheevos()
 {
-	if (Utils::String::toInteger(getMetadata(MetaDataId::CheevosId)) > 0)
-		return getSourceFileData()->getSystem()->isCheevosSupported();
+	if (Utils::String::toInteger(getMetadata(MetaDataId::CheevosId)) > 0){
+		bool result = getSourceFileData()->getSystem()->isCheevosSupported();
+		LOG(LogDebug) << "hasCheevos : " << result;
+		return result;
 
+	}
+	LOG(LogDebug) << "hasCheevos : false ";
 	return false;
 }
 
@@ -1394,20 +1398,27 @@ void FileData::checkMd5(bool force)
 
 void FileData::checkCheevosHash(bool force)
 {
+	LOG(LogDebug) << "checkCheevosHash ...";
 	if (getSourceFileData() != this)
 	{
+		LOG(LogDebug) << "checking, force : " << force;
 		getSourceFileData()->checkCheevosHash(force);
 		return;
 	}
 
-	if (!force && !getMetadata(MetaDataId::CheevosHash).empty())
+	if (!force && !getMetadata(MetaDataId::CheevosHash).empty()){
+		LOG(LogDebug) << "checking, returning ..." ;
 		return;
+	}
 
 	SystemData* system = getSystem();
-	if (system == nullptr)
+	if (system == nullptr){
+		LOG(LogDebug) << "checking, returning because system == null ";
 		return;
+	}
 
 	auto crc = RetroAchievements::getCheevosHash(system, getPath());
+	LOG(LogDebug) << "crc : " << crc;
 	getMetadata().set(MetaDataId::CheevosHash, Utils::String::toUpper(crc));
 	saveToGamelistRecovery(this);
 }

@@ -97,6 +97,11 @@ void ThreadedHasher::run()
 	bool cheevos = ((mType & HASH_CHEEVOS_MD5) == HASH_CHEEVOS_MD5);
 	bool netplay = ((mType & HASH_NETPLAY_CRC) == HASH_NETPLAY_CRC);
 
+	LOG(LogDebug) << "mType: " << mType;
+	LOG(LogDebug) << "HASH_CHEEVOS_MD5: " << HASH_CHEEVOS_MD5;
+	LOG(LogDebug) << "cheevos: " << cheevos;
+
+
 	while (!mExit && !mSearchQueue.empty())
 	{
 		FileData* game = mSearchQueue.front();
@@ -199,15 +204,22 @@ void ThreadedHasher::start(Window* window, HasherType type, bool forceAllGames, 
 		if (systems != nullptr && systems->find(sys->getName()) == systems->cend())
 			continue;
 
+		LOG(LogDebug) << "rootFolder clean Name : " << sys->getRootFolder()->getCleanName();
+		
+
 		for (auto file : sys->getRootFolder()->getFilesRecursive(GAME))
 		{
+			LOG(LogDebug) << "file : " << file;
 			bool netPlay = takeNetplay && (forceAllGames || file->getMetadata(MetaDataId::Crc32).empty());
 			bool cheevos = takeCheevos && (forceAllGames || file->getMetadata(MetaDataId::CheevosHash).empty());
+
+			LOG(LogDebug) << "netPlay : " << netPlay;
+			LOG(LogDebug) << "cheevos : " << cheevos;
 
 			if (cheevos)
 			{
 				std::string ext = Utils::String::toLower(Utils::FileSystem::getExtension(file->getPath()));
-				
+				LOG(LogDebug) << "ext : " << ext;
 				if (ext == ".pbp" || ext == ".cso") // Currently unsupported formats
 					cheevos = false;
 			}
@@ -219,6 +231,7 @@ void ThreadedHasher::start(Window* window, HasherType type, bool forceAllGames, 
 
 	if (searchQueue.size() == 0)
 	{
+		LOG(LogDebug) << "searchQueue.size() == 0 -> NO GAMES FIT THAT CRITERIA.";
 		if (!silent)
 			window->pushGui(new GuiMsgBox(window, _("NO GAMES FIT THAT CRITERIA.")));
 

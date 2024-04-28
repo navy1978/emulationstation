@@ -434,7 +434,7 @@ RetroAchievementInfo RetroAchievements::toRetroAchivementInfo(UserSummary& ret)
 std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 {
 	std::map<std::string, std::string> ret;
-
+	LOG(LogDebug) << "getCheevosHashes.... ";
 	try
 	{
 		std::map<int, std::string> officialGames;
@@ -447,13 +447,18 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 		// Official games
 		if (officialGamesList.wait())
 		{
+			LOG(LogDebug) << "got officialGamesList : " << officialGamesList.getContent().c_str();
 			rapidjson::Document ogdoc;
 			ogdoc.Parse(officialGamesList.getContent().c_str());
-			if (ogdoc.HasParseError())
+			if (ogdoc.HasParseError()){
+				LOG(LogDebug) << "got officialGamesList with parsing errors exiting... ";
 				return ret;
+			}
 
-			if (!ogdoc.HasMember("Response"))
+			if (!ogdoc.HasMember("Response")){
+				LOG(LogDebug) << "got officialGamesList with no Response member exiting... ";
 				return ret;
+			}
 
 			std::map<int, std::string> officialGames;
 
@@ -461,11 +466,14 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 			for (auto it = response.MemberBegin(); it != response.MemberEnd(); ++it)
 			{
 				int gameId = Utils::String::toInteger(it->name.GetString());
-
-				if (it->value.GetType() == rapidjson::Type::kStringType)
+				LOG(LogDebug) << "gameId : " << gameId;
+				if (it->value.GetType() == rapidjson::Type::kStringType){
 					officialGames[gameId] = it->value.GetString();
-				else if (it->value.GetType() == rapidjson::Type::kNumberType)
+					LOG(LogDebug) << "officialGames[gameId] : " << it->value.GetString();
+				} else if (it->value.GetType() == rapidjson::Type::kNumberType){
 					officialGames[gameId] = std::to_string(it->value.GetInt());
+					LOG(LogDebug) << "officialGames[gameId] : " << std::to_string(it->value.GetInt());
+				}
 			}
 		}
 		else if (officialGamesList.status() != HttpReq::REQ_SUCCESS)
@@ -474,13 +482,18 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 		// Hash library
 		if (hashLibrary.wait())
 		{
+			LOG(LogDebug) << "got hashLibrary : " << hashLibrary.getContent().c_str();
 			rapidjson::Document doc;
 			doc.Parse(hashLibrary.getContent().c_str());
-			if (doc.HasParseError())
+			if (doc.HasParseError()){
+				LOG(LogDebug) << "got hashLibrary with parsing errors exiting... ";
 				return ret;
+			}
 
-			if (!doc.HasMember("MD5List"))
+			if (!doc.HasMember("MD5List")){
+				LOG(LogDebug) << "got hashLibrary with no MD5List member exiting... ";
 				return ret;
+			}
 
 			const rapidjson::Value& mdlist = doc["MD5List"];
 			for (auto it = mdlist.MemberBegin(); it != mdlist.MemberEnd(); ++it)

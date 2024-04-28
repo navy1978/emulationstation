@@ -288,12 +288,16 @@ std::string FileFilterIndex::getIndexableKey(FileData* game, FilterIndexType typ
 
 	case CHEEVOS_FILTER:
 	{
-		if (getSecondary)
+		if (getSecondary){
+			LOG(LogDebug) << "CHEEVOS FILTER break , getSecondary: " << getSecondary;
 			break;
+		}
 
-		if (game->getType() != GAME)
+		if (game->getType() != GAME){
+			LOG(LogDebug) << "CHEEVOS FILTER break returning FALSE, game->getType() != GAME ";
 			return "FALSE";
-
+		}
+		LOG(LogDebug) << "CHEEVOS FILTER game->hasCheevos(): " << game->hasCheevos();
 		return game->hasCheevos() ? "TRUE" : "FALSE";		
 	}
 
