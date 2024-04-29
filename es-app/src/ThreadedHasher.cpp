@@ -32,9 +32,12 @@ ThreadedHasher::ThreadedHasher(Window* window, HasherType type, std::queue<FileD
 
 	mSearchQueue = searchQueue;
 	mTotal = mSearchQueue.size();
+	LOG(LogDebug) << "mTotal / mSearchQueue.size():  " << mTotal;
+	mWndNotification = mWindow->createAsyncNotificationComponent();
 
 	if ((mType & HASH_CHEEVOS_MD5) == HASH_CHEEVOS_MD5)
 	{
+		LOG(LogDebug) << "mType & HASH_CHEEVOS_MD5) == HASH_CHEEVOS_MD5 ";
 		try
 		{
 			mCheevosHashes = RetroAchievements::getCheevosHashes();
@@ -49,12 +52,16 @@ ThreadedHasher::ThreadedHasher(Window* window, HasherType type, std::queue<FileD
 		}
 	}
 
-	mWndNotification = mWindow->createAsyncNotificationComponent();
+	
 
-	if (mType == HASH_CHEEVOS_MD5)
+	if (mType == HASH_CHEEVOS_MD5){
+		LOG(LogDebug) << "mType == HASH_CHEEVOS_MD5 ";
 		mWndNotification->updateTitle(ICONINDEX + _("SEARCHING RETROACHIEVEMENTS"));
-	else 
+	}
+	else {
+		LOG(LogDebug) << "mType == else";
 		mWndNotification->updateTitle(ICONINDEX + _("SEARCHING NETPLAY GAMES"));
+	}
 
 	int num_threads = std::thread::hardware_concurrency() / 2;
 	if (num_threads == 0)
@@ -100,10 +107,13 @@ void ThreadedHasher::run()
 	LOG(LogDebug) << "mType: " << mType;
 	LOG(LogDebug) << "HASH_CHEEVOS_MD5: " << HASH_CHEEVOS_MD5;
 	LOG(LogDebug) << "cheevos: " << cheevos;
-
+	LOG(LogDebug) << "mExit: " << mExit;
+	LOG(LogDebug) << "mSearchQueue.empty(): " << mSearchQueue.empty();
 
 	while (!mExit && !mSearchQueue.empty())
 	{
+		
+		LOG(LogDebug) << "In while loop in ThreadedHasher::run()";
 		FileData* game = mSearchQueue.front();
 
 		auto label = formatGameName(game);
@@ -150,6 +160,7 @@ void ThreadedHasher::run()
 
 		lock.lock();
 	}
+	LOG(LogDebug) << "Out from while loop in ThreadedHasher::run()";
 
 	mThreadCount--;
 
@@ -240,6 +251,8 @@ void ThreadedHasher::start(Window* window, HasherType type, bool forceAllGames, 
 
 	try
 	{
+		LOG(LogDebug) << "Creating an instance of ThreadedHasher with searchQueue.size(): " << searchQueue.size();
+		LOG(LogDebug) << "forceAllGames: " << forceAllGames;
 		ThreadedHasher::mInstance = new ThreadedHasher(window, type, searchQueue, forceAllGames);
 	}
 	catch (const std::exception& e)

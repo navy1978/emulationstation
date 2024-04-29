@@ -1418,8 +1418,12 @@ void FileData::checkCheevosHash(bool force)
 	}
 
 	auto crc = RetroAchievements::getCheevosHash(system, getPath());
+	
 	LOG(LogDebug) << "crc : " << crc;
+	LOG(LogDebug) << "CheevosHash : " << MetaDataId::CheevosHash;
+	LOG(LogDebug) << "setting metadata info...";
 	getMetadata().set(MetaDataId::CheevosHash, Utils::String::toUpper(crc));
+	LOG(LogDebug) << "saving metadata info...";
 	saveToGamelistRecovery(this);
 }
 

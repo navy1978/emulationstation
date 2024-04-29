@@ -218,6 +218,7 @@ void parseGamelist(SystemData* system, std::unordered_map<std::string, FileData*
 bool addFileDataNode(pugi::xml_node& parent, FileData* file, const char* tag, SystemData* system)
 {
 	//create game and add to parent node
+	LOG(LogDebug) << "create game and add to parent node : " << tag;
 	pugi::xml_node newNode = parent.append_child(tag);
 
 	//write metadata
@@ -229,24 +230,31 @@ bool addFileDataNode(pugi::xml_node& parent, FileData* file, const char* tag, Sy
 	{
 		//if the only info is the default name, don't bother with this node
 		//delete it and ultimately do nothing
+		LOG(LogDebug) << "if the only info is the default name, don't bother with this node delete it and ultimately do nothing";
 		parent.remove_child(newNode);
 		return false;
 	}
 
 	// there's something useful in there so we'll keep the node, add the path
 	// try and make the path relative if we can so things still work if we change the rom folder location in the future
+
+	LOG(LogDebug) << "there's something useful in there so we'll keep the node, add the path";
 	std::string path = Utils::FileSystem::createRelativePath(file->getPath(), system->getStartPath(), false).c_str();
 	if (path.empty() && file->getType() == FOLDER)
 		path = ".";
 
 	newNode.prepend_child("path").text().set(path.c_str());
+	LOG(LogDebug) << "Node added";
 	return true;	
 }
 
 bool saveToGamelistRecovery(FileData* file)
 {
-	if (!Settings::getInstance()->getBool("SaveGamelistsOnExit"))
+	LOG(LogDebug) << "saveToGamelistRecovery ...";
+	if (!Settings::getInstance()->getBool("SaveGamelistsOnExit")){
+		LOG(LogDebug) << "SaveGamelistsOnExit disabled, aborting save ";
 		return false;
+	}
 
 	pugi::xml_document doc;
 	pugi::xml_node root = doc.append_child("gameList");
@@ -254,9 +262,12 @@ bool saveToGamelistRecovery(FileData* file)
 	const char* tag = file->getType() == GAME ? "game" : "folder";
 
 	SystemData* system = file->getSourceFileData()->getSystem();
-	if (!Settings::HiddenSystemsShowGames() && !system->isVisible())
+	if (!Settings::HiddenSystemsShowGames() && !system->isVisible()){
+		LOG(LogDebug) << "System is not visible aborting the save ";
 		return false;
+	}
 
+	LOG(LogDebug) << "appending value : " << system->getGamelistHash();
 	root.append_attribute("parentHash").set_value(system->getGamelistHash());
 
 	if (addFileDataNode(root, file, tag, system))
@@ -278,8 +289,10 @@ bool saveToGamelistRecovery(FileData* file)
 			LOG(LogError) << "Error saving gamelist.xml to \"" << path << "\" (for system " << system->getName() << ")!";
 			return false;
 		}
-
+		LOG(LogDebug) << "FileDataNode added!";
 		return true;
+	}else{
+		LOG(LogDebug) << "FileDataNode not added!";
 	}
 
 	return false;
