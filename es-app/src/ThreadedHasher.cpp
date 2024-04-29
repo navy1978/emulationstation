@@ -41,6 +41,7 @@ ThreadedHasher::ThreadedHasher(Window* window, HasherType type, std::queue<FileD
 		try
 		{
 			mCheevosHashes = RetroAchievements::getCheevosHashes();
+			LOG(LogDebug) << "--->mCheevosHashes.size():  " << mCheevosHashes.size();
 			if (mCheevosHashes.size() == 0)
 				while (!mSearchQueue.empty())
 					mSearchQueue.pop();

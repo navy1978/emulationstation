@@ -445,6 +445,7 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 		HttpReq officialGamesList("https://retroachievements.org/dorequest.php?r=officialgameslist", &options);
 
 		// Official games
+		LOG(LogDebug) << "waiting for ... officialGamesList";
 		if (officialGamesList.wait())
 		{
 			LOG(LogDebug) << "got officialGamesList : " << officialGamesList.getContent().c_str();
@@ -480,6 +481,7 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 			throw std::domain_error("Error while accessing retroachievements official games list :\n" + officialGamesList.getErrorMsg());
 
 		// Hash library
+		LOG(LogDebug) << "waiting for ... hashLibrary";
 		if (hashLibrary.wait())
 		{
 			LOG(LogDebug) << "got hashLibrary : " << hashLibrary.getContent().c_str();
@@ -496,6 +498,7 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 			}
 
 			const rapidjson::Value& mdlist = doc["MD5List"];
+			LOG(LogDebug) << "Looking for a game";
 			for (auto it = mdlist.MemberBegin(); it != mdlist.MemberEnd(); ++it)
 			{
 				std::string name = Utils::String::toUpper(it->name.GetString());
@@ -509,6 +512,7 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 					continue;
 
 				ret[name] = std::to_string(gameId);
+				LOG(LogDebug) << "game found";
 			}
 		}
 		else if (hashLibrary.status() != HttpReq::REQ_SUCCESS)
@@ -522,7 +526,7 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 	{
 
 	}
-
+LOG(LogDebug) << "returning ret";
 	return ret;
 }
 
