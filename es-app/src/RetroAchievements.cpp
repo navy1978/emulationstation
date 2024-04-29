@@ -18,90 +18,87 @@
 
 using namespace PlatformIds;
 
-const std::map<PlatformId, unsigned short> cheevosConsoleID
-{
-	{ ARCADE, RC_CONSOLE_ARCADE },
-	{ NEOGEO, RC_CONSOLE_ARCADE },
+const std::map<PlatformId, unsigned short> cheevosConsoleID{
+	{ARCADE, RC_CONSOLE_ARCADE},
+	{NEOGEO, RC_CONSOLE_ARCADE},
 
-	{ SEGA_MEGA_DRIVE, RC_CONSOLE_MEGA_DRIVE },
-	{ NINTENDO_64, RC_CONSOLE_NINTENDO_64 },
-	{ SUPER_NINTENDO, RC_CONSOLE_SUPER_NINTENDO },
-	{ GAME_BOY, RC_CONSOLE_GAMEBOY },
-	{ GAME_BOY_ADVANCE, RC_CONSOLE_GAMEBOY_ADVANCE },
-	{ GAME_BOY_COLOR, RC_CONSOLE_GAMEBOY_COLOR },
-	{ NINTENDO_ENTERTAINMENT_SYSTEM, RC_CONSOLE_NINTENDO },
-	{ TURBOGRAFX_16, RC_CONSOLE_PC_ENGINE },
-	{ SUPERGRAFX, RC_CONSOLE_PC_ENGINE },
-	{ SEGA_CD, RC_CONSOLE_SEGA_CD },
-	{ SEGA_32X, RC_CONSOLE_SEGA_32X },
-	{ SEGA_MASTER_SYSTEM, RC_CONSOLE_MASTER_SYSTEM },
-	{ PLAYSTATION, RC_CONSOLE_PLAYSTATION },
-	{ ATARI_LYNX, RC_CONSOLE_ATARI_LYNX },
-	{ NEOGEO_POCKET, RC_CONSOLE_NEOGEO_POCKET },
-	{ SEGA_GAME_GEAR, RC_CONSOLE_GAME_GEAR },
-	{ NINTENDO_GAMECUBE, RC_CONSOLE_GAMECUBE },
-	{ ATARI_JAGUAR, RC_CONSOLE_ATARI_JAGUAR },
-	{ NINTENDO_DS, RC_CONSOLE_NINTENDO_DS },
-	{ NINTENDO_WII, RC_CONSOLE_WII },
-	{ NINTENDO_WII_U, RC_CONSOLE_WII_U },
-	{ PLAYSTATION_2, RC_CONSOLE_PLAYSTATION_2 },
-	{ XBOX, RC_CONSOLE_XBOX },
-	{ VIDEOPAC_ODYSSEY2, RC_CONSOLE_MAGNAVOX_ODYSSEY2 },
-	{ POKEMINI, RC_CONSOLE_POKEMON_MINI },
-	{ ATARI_2600, RC_CONSOLE_ATARI_2600 },
-	{ PC, RC_CONSOLE_MS_DOS },
-	{ NINTENDO_VIRTUAL_BOY, RC_CONSOLE_VIRTUAL_BOY },
-	{ MSX, RC_CONSOLE_MSX },
-	{ COMMODORE_64, RC_CONSOLE_COMMODORE_64 },
-	{ ZX81, RC_CONSOLE_ZX81 },
-	{ ORICATMOS, RC_CONSOLE_ORIC },
-	{ SEGA_SG1000, RC_CONSOLE_SG1000 },
-	{ AMIGA, RC_CONSOLE_AMIGA },
-	{ ATARI_ST, RC_CONSOLE_ATARI_ST },
-	{ AMSTRAD_CPC, RC_CONSOLE_AMSTRAD_PC },
-	{ CREATONIC_MEGA_DUCK, RC_CONSOLE_MEGADUCK },
-	{ APPLE_II, RC_CONSOLE_APPLE_II },
-	{ SEGA_SATURN, RC_CONSOLE_SATURN },
-	{ SEGA_DREAMCAST, RC_CONSOLE_DREAMCAST },
-	{ PLAYSTATION_PORTABLE, RC_CONSOLE_PSP },
-	{ THREEDO, RC_CONSOLE_3DO },
-	{ COLECOVISION, RC_CONSOLE_COLECOVISION },
-	{ INTELLIVISION, RC_CONSOLE_INTELLIVISION },
-	{ VECTREX, RC_CONSOLE_VECTREX },
-	{ PC_88, RC_CONSOLE_PC8800 },
-	{ PC_98, RC_CONSOLE_PC9800 },
-	{ PCFX, RC_CONSOLE_PCFX },
-	{ ATARI_5200, RC_CONSOLE_ATARI_5200 },
-	{ ATARI_7800, RC_CONSOLE_ATARI_7800 },
-	{ SHARP_X6800, RC_CONSOLE_X68K },
-	{ WONDERSWAN, RC_CONSOLE_WONDERSWAN },
-	{ WASM4, RC_CONSOLE_WASM4 },
-	{ NEOGEO_CD, RC_CONSOLE_NEO_GEO_CD },
-	{ CHANNELF, RC_CONSOLE_FAIRCHILD_CHANNEL_F },
-	{ ZX_SPECTRUM, RC_CONSOLE_ZX_SPECTRUM },
-	{ NINTENDO_GAME_AND_WATCH, RC_CONSOLE_GAME_AND_WATCH },
-	{ NINTENDO_3DS, RC_CONSOLE_NINTENDO_3DS },
-	{ VIC20, RC_CONSOLE_VIC20 },
-	{ SUPER_CASSETTE_VISION, RC_CONSOLE_SUPER_CASSETTEVISION },
-	{ FMTOWNS, RC_CONSOLE_FM_TOWNS },
-	{ NOKIA_NGAGE, RC_CONSOLE_NOKIA_NGAGE },
-	{ PHILIPS_CDI, RC_CONSOLE_CDI },
-	{ WATARA_SUPERVISION, RC_CONSOLE_SUPERVISION },
-	{ SHARP_X1, RC_CONSOLE_SHARPX1 },
-	{ TIC80, RC_CONSOLE_TIC80 },
-	{ THOMSON_TO_MO, RC_CONSOLE_THOMSONTO8 },
-	{ ARDUBOY, RC_CONSOLE_ARDUBOY },
-	{ SUPER_NINTENDO_MSU1, RC_CONSOLE_SUPER_NINTENDO },
-	{ EMERSON_ARCADIA_2001, RC_CONSOLE_ARCADIA_2001 },
-	{ ATARI_JAGUAR_CD, RC_CONSOLE_ATARI_JAGUAR_CD },
-	{ TURBOGRAFX_CD, RC_CONSOLE_PC_ENGINE_CD },
-	{ UZEBOX, RC_CONSOLE_UZEBOX }	
-};
+	{SEGA_MEGA_DRIVE, RC_CONSOLE_MEGA_DRIVE},
+	{NINTENDO_64, RC_CONSOLE_NINTENDO_64},
+	{SUPER_NINTENDO, RC_CONSOLE_SUPER_NINTENDO},
+	{GAME_BOY, RC_CONSOLE_GAMEBOY},
+	{GAME_BOY_ADVANCE, RC_CONSOLE_GAMEBOY_ADVANCE},
+	{GAME_BOY_COLOR, RC_CONSOLE_GAMEBOY_COLOR},
+	{NINTENDO_ENTERTAINMENT_SYSTEM, RC_CONSOLE_NINTENDO},
+	{TURBOGRAFX_16, RC_CONSOLE_PC_ENGINE},
+	{SUPERGRAFX, RC_CONSOLE_PC_ENGINE},
+	{SEGA_CD, RC_CONSOLE_SEGA_CD},
+	{SEGA_32X, RC_CONSOLE_SEGA_32X},
+	{SEGA_MASTER_SYSTEM, RC_CONSOLE_MASTER_SYSTEM},
+	{PLAYSTATION, RC_CONSOLE_PLAYSTATION},
+	{ATARI_LYNX, RC_CONSOLE_ATARI_LYNX},
+	{NEOGEO_POCKET, RC_CONSOLE_NEOGEO_POCKET},
+	{SEGA_GAME_GEAR, RC_CONSOLE_GAME_GEAR},
+	{NINTENDO_GAMECUBE, RC_CONSOLE_GAMECUBE},
+	{ATARI_JAGUAR, RC_CONSOLE_ATARI_JAGUAR},
+	{NINTENDO_DS, RC_CONSOLE_NINTENDO_DS},
+	{NINTENDO_WII, RC_CONSOLE_WII},
+	{NINTENDO_WII_U, RC_CONSOLE_WII_U},
+	{PLAYSTATION_2, RC_CONSOLE_PLAYSTATION_2},
+	{XBOX, RC_CONSOLE_XBOX},
+	{VIDEOPAC_ODYSSEY2, RC_CONSOLE_MAGNAVOX_ODYSSEY2},
+	{POKEMINI, RC_CONSOLE_POKEMON_MINI},
+	{ATARI_2600, RC_CONSOLE_ATARI_2600},
+	{PC, RC_CONSOLE_MS_DOS},
+	{NINTENDO_VIRTUAL_BOY, RC_CONSOLE_VIRTUAL_BOY},
+	{MSX, RC_CONSOLE_MSX},
+	{COMMODORE_64, RC_CONSOLE_COMMODORE_64},
+	{ZX81, RC_CONSOLE_ZX81},
+	{ORICATMOS, RC_CONSOLE_ORIC},
+	{SEGA_SG1000, RC_CONSOLE_SG1000},
+	{AMIGA, RC_CONSOLE_AMIGA},
+	{ATARI_ST, RC_CONSOLE_ATARI_ST},
+	{AMSTRAD_CPC, RC_CONSOLE_AMSTRAD_PC},
+	{CREATONIC_MEGA_DUCK, RC_CONSOLE_MEGADUCK},
+	{APPLE_II, RC_CONSOLE_APPLE_II},
+	{SEGA_SATURN, RC_CONSOLE_SATURN},
+	{SEGA_DREAMCAST, RC_CONSOLE_DREAMCAST},
+	{PLAYSTATION_PORTABLE, RC_CONSOLE_PSP},
+	{THREEDO, RC_CONSOLE_3DO},
+	{COLECOVISION, RC_CONSOLE_COLECOVISION},
+	{INTELLIVISION, RC_CONSOLE_INTELLIVISION},
+	{VECTREX, RC_CONSOLE_VECTREX},
+	{PC_88, RC_CONSOLE_PC8800},
+	{PC_98, RC_CONSOLE_PC9800},
+	{PCFX, RC_CONSOLE_PCFX},
+	{ATARI_5200, RC_CONSOLE_ATARI_5200},
+	{ATARI_7800, RC_CONSOLE_ATARI_7800},
+	{SHARP_X6800, RC_CONSOLE_X68K},
+	{WONDERSWAN, RC_CONSOLE_WONDERSWAN},
+	{WASM4, RC_CONSOLE_WASM4},
+	{NEOGEO_CD, RC_CONSOLE_NEO_GEO_CD},
+	{CHANNELF, RC_CONSOLE_FAIRCHILD_CHANNEL_F},
+	{ZX_SPECTRUM, RC_CONSOLE_ZX_SPECTRUM},
+	{NINTENDO_GAME_AND_WATCH, RC_CONSOLE_GAME_AND_WATCH},
+	{NINTENDO_3DS, RC_CONSOLE_NINTENDO_3DS},
+	{VIC20, RC_CONSOLE_VIC20},
+	{SUPER_CASSETTE_VISION, RC_CONSOLE_SUPER_CASSETTEVISION},
+	{FMTOWNS, RC_CONSOLE_FM_TOWNS},
+	{NOKIA_NGAGE, RC_CONSOLE_NOKIA_NGAGE},
+	{PHILIPS_CDI, RC_CONSOLE_CDI},
+	{WATARA_SUPERVISION, RC_CONSOLE_SUPERVISION},
+	{SHARP_X1, RC_CONSOLE_SHARPX1},
+	{TIC80, RC_CONSOLE_TIC80},
+	{THOMSON_TO_MO, RC_CONSOLE_THOMSONTO8},
+	{ARDUBOY, RC_CONSOLE_ARDUBOY},
+	{SUPER_NINTENDO_MSU1, RC_CONSOLE_SUPER_NINTENDO},
+	{EMERSON_ARCADIA_2001, RC_CONSOLE_ARCADIA_2001},
+	{ATARI_JAGUAR_CD, RC_CONSOLE_ATARI_JAGUAR_CD},
+	{TURBOGRAFX_CD, RC_CONSOLE_PC_ENGINE_CD},
+	{UZEBOX, RC_CONSOLE_UZEBOX}};
 
-const std::set<unsigned short> consolesWithmd5hashes
-{
+const std::set<unsigned short> consolesWithmd5hashes{
 	RC_CONSOLE_APPLE_II,
-	RC_CONSOLE_ATARI_2600,	
+	RC_CONSOLE_ATARI_2600,
 	RC_CONSOLE_ATARI_JAGUAR,
 	RC_CONSOLE_COLECOVISION,
 	RC_CONSOLE_GAMEBOY,
@@ -122,8 +119,7 @@ const std::set<unsigned short> consolesWithmd5hashes
 	RC_CONSOLE_VECTREX,
 	RC_CONSOLE_VIRTUAL_BOY,
 	RC_CONSOLE_WONDERSWAN,
-	RC_CONSOLE_SUPERVISION
-};
+	RC_CONSOLE_SUPERVISION};
 
 // Use empty UserAgent with doRequest.php calls
 static HttpReqOptions getHttpOptions()
@@ -132,9 +128,9 @@ static HttpReqOptions getHttpOptions()
 
 #ifdef CHEEVOS_DEV_LOGIN
 	std::string ret = Utils::String::extractString(CHEEVOS_DEV_LOGIN, "z=", "&");
-	ret =  ret + "/" + Utils::String::replace(RESOURCE_VERSION_STRING, ",", ".");		 
+	ret = ret + "/" + Utils::String::replace(RESOURCE_VERSION_STRING, ",", ".");
 	options.userAgent = ret;
-#endif	
+#endif
 
 	return options;
 }
@@ -143,8 +139,8 @@ std::string RetroAchievements::getApiUrl(const std::string method, const std::st
 {
 #ifdef CHEEVOS_DEV_LOGIN
 	auto options = std::string(CHEEVOS_DEV_LOGIN);
-	return "https://retroachievements.org/API/"+ method +".php?"+ options +"&" + parameters;
-#else 
+	return "https://retroachievements.org/API/" + method + ".php?" + options + "&" + parameters;
+#else
 	return "https://retroachievements.org/API/" + method + ".php?" + parameters;
 #endif
 }
@@ -165,13 +161,12 @@ std::string Achievement::getBadgeUrl()
 	return "http://i.retroachievements.org/Badge/" + BadgeName + "_lock.png";
 }
 
-
-int jsonInt(const rapidjson::Value& val, const std::string name)
+int jsonInt(const rapidjson::Value &val, const std::string name)
 {
 	if (!val.HasMember(name.c_str()))
 		return 0;
 
-	const rapidjson::Value& value = val[name.c_str()];
+	const rapidjson::Value &value = val[name.c_str()];
 
 	if (value.IsInt())
 		return value.GetInt();
@@ -182,12 +177,12 @@ int jsonInt(const rapidjson::Value& val, const std::string name)
 	return 0;
 }
 
-std::string jsonString(const rapidjson::Value& val, const std::string name)
+std::string jsonString(const rapidjson::Value &val, const std::string name)
 {
 	if (!val.HasMember(name.c_str()))
 		return "";
 
-	const rapidjson::Value& value = val[name.c_str()];
+	const rapidjson::Value &value = val[name.c_str()];
 
 	if (value.IsInt())
 		return std::to_string(value.GetInt());
@@ -198,7 +193,7 @@ std::string jsonString(const rapidjson::Value& val, const std::string name)
 	return "";
 }
 
-bool sortAchievements(const Achievement& sys1, const Achievement& sys2)
+bool sortAchievements(const Achievement &sys1, const Achievement &sys2)
 {
 	if (sys1.DateEarned.empty() != sys2.DateEarned.empty())
 		return !sys1.DateEarned.empty() && sys2.DateEarned.empty();
@@ -252,10 +247,10 @@ GameInfoAndUserProgress RetroAchievements::getGameInfoAndUserProgress(int gameId
 
 	if (doc.HasMember("Achievements"))
 	{
-		const rapidjson::Value& ra = doc["Achievements"];
+		const rapidjson::Value &ra = doc["Achievements"];
 		for (auto achivId = ra.MemberBegin(); achivId != ra.MemberEnd(); ++achivId)
 		{
-			auto& recent = achivId->value;
+			auto &recent = achivId->value;
 
 			Achievement item;
 			item.ID = jsonString(recent, "ID");
@@ -291,7 +286,7 @@ UserSummary RetroAchievements::getUserSummary(const std::string userName, int ga
 	std::string count = std::to_string(gameCount);
 
 	auto options = getHttpOptions();
-	HttpReq httpreq(getApiUrl("API_GetUserSummary", "u="+ HttpReq::urlEncode(usrName) +"&g="+ count +"&a="+ count), &options);
+	HttpReq httpreq(getApiUrl("API_GetUserSummary", "u=" + HttpReq::urlEncode(usrName) + "&g=" + count + "&a=" + count), &options);
 	httpreq.wait();
 
 	rapidjson::Document doc;
@@ -321,7 +316,7 @@ UserSummary RetroAchievements::getUserSummary(const std::string userName, int ga
 
 	if (doc.HasMember("RecentlyPlayed"))
 	{
-		for (auto& recent : doc["RecentlyPlayed"].GetArray())
+		for (auto &recent : doc["RecentlyPlayed"].GetArray())
 		{
 			RecentGame item;
 			item.GameID = jsonString(recent, "GameID");
@@ -338,11 +333,11 @@ UserSummary RetroAchievements::getUserSummary(const std::string userName, int ga
 
 	if (doc.HasMember("Awarded"))
 	{
-		const rapidjson::Value& ra = doc["Awarded"];
+		const rapidjson::Value &ra = doc["Awarded"];
 		for (auto achivId = ra.MemberBegin(); achivId != ra.MemberEnd(); ++achivId)
 		{
 			std::string gameID = achivId->name.GetString();
-			auto& recent = achivId->value;
+			auto &recent = achivId->value;
 
 			Award item;
 			item.NumPossibleAchievements = jsonInt(recent, "NumPossibleAchievements");
@@ -358,14 +353,14 @@ UserSummary RetroAchievements::getUserSummary(const std::string userName, int ga
 
 	if (doc.HasMember("RecentAchievements"))
 	{
-		const rapidjson::Value& ra = doc["RecentAchievements"];
+		const rapidjson::Value &ra = doc["RecentAchievements"];
 		for (auto achivId = ra.MemberBegin(); achivId != ra.MemberEnd(); ++achivId)
 		{
 			std::string gameID = achivId->name.GetString();
 
 			for (auto itrc = achivId->value.MemberBegin(); itrc != achivId->value.MemberEnd(); ++itrc)
 			{
-				auto& recent = itrc->value;
+				auto &recent = itrc->value;
 				RecentAchievement item;
 
 				item.ID = jsonString(recent, "ID");
@@ -385,8 +380,7 @@ UserSummary RetroAchievements::getUserSummary(const std::string userName, int ga
 	return ret;
 }
 
-
-RetroAchievementInfo RetroAchievements::toRetroAchivementInfo(UserSummary& ret)
+RetroAchievementInfo RetroAchievements::toRetroAchivementInfo(UserSummary &ret)
 {
 	RetroAchievementInfo info;
 
@@ -422,7 +416,7 @@ RetroAchievementInfo RetroAchievements::toRetroAchivementInfo(UserSummary& ret)
 			rg.totalAchievements = aw->second.NumPossibleAchievements;
 
 			rg.achievements = std::to_string(aw->second.NumAchieved) + " of " + std::to_string(aw->second.NumPossibleAchievements);
-			rg.points = std::to_string(aw->second.ScoreAchieved) + "/" + std::to_string(aw->second.PossibleScore);						
+			rg.points = std::to_string(aw->second.ScoreAchieved) + "/" + std::to_string(aw->second.PossibleScore);
 		}
 
 		info.games.push_back(rg);
@@ -451,27 +445,32 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 			LOG(LogDebug) << "got officialGamesList : " << officialGamesList.getContent().c_str();
 			rapidjson::Document ogdoc;
 			ogdoc.Parse(officialGamesList.getContent().c_str());
-			if (ogdoc.HasParseError()){
+			if (ogdoc.HasParseError())
+			{
 				LOG(LogDebug) << "got officialGamesList with parsing errors exiting... ";
 				return ret;
 			}
 
-			if (!ogdoc.HasMember("Response")){
+			if (!ogdoc.HasMember("Response"))
+			{
 				LOG(LogDebug) << "got officialGamesList with no Response member exiting... ";
 				return ret;
 			}
 
 			std::map<int, std::string> officialGames;
 
-			const rapidjson::Value& response = ogdoc["Response"];
+			const rapidjson::Value &response = ogdoc["Response"];
 			for (auto it = response.MemberBegin(); it != response.MemberEnd(); ++it)
 			{
 				int gameId = Utils::String::toInteger(it->name.GetString());
 				LOG(LogDebug) << "gameId : " << gameId;
-				if (it->value.GetType() == rapidjson::Type::kStringType){
+				if (it->value.GetType() == rapidjson::Type::kStringType)
+				{
 					officialGames[gameId] = it->value.GetString();
 					LOG(LogDebug) << "officialGames[gameId] : " << it->value.GetString();
-				} else if (it->value.GetType() == rapidjson::Type::kNumberType){
+				}
+				else if (it->value.GetType() == rapidjson::Type::kNumberType)
+				{
 					officialGames[gameId] = std::to_string(it->value.GetInt());
 					LOG(LogDebug) << "officialGames[gameId] : " << std::to_string(it->value.GetInt());
 				}
@@ -487,29 +486,64 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 			LOG(LogDebug) << "got hashLibrary : " << hashLibrary.getContent().c_str();
 			rapidjson::Document doc;
 			doc.Parse(hashLibrary.getContent().c_str());
-			if (doc.HasParseError()){
+			if (doc.HasParseError())
+			{
 				LOG(LogDebug) << "got hashLibrary with parsing errors exiting... ";
 				return ret;
 			}
 
-			if (!doc.HasMember("MD5List")){
+			if (!doc.HasMember("MD5List"))
+			{
 				LOG(LogDebug) << "got hashLibrary with no MD5List member exiting... ";
 				return ret;
 			}
 
-			const rapidjson::Value& mdlist = doc["MD5List"];
-			LOG(LogDebug) << "Looking for a game";
+			const rapidjson::Value &mdlist = doc["MD5List"];
+			LOG(LogDebug) << "Looking for games";
 			for (auto it = mdlist.MemberBegin(); it != mdlist.MemberEnd(); ++it)
 			{
 				std::string name = Utils::String::toUpper(it->name.GetString());
+				LOG(LogDebug) << "Looking for game: " << name;
+
+				
+				rapidjson::Type valueType = it->value.GetType();
+
+				
+				switch (valueType)
+				{
+				case rapidjson::kNullType:
+					std::cout << "Value type is null" << std::endl;
+					break;
+				case rapidjson::kFalseType:
+				case rapidjson::kTrueType:
+					std::cout << "Value type is boolean" << std::endl;
+					break;
+				case rapidjson::kObjectType:
+					std::cout << "Value type is object" << std::endl;
+					break;
+				case rapidjson::kArrayType:
+					std::cout << "Value type is array" << std::endl;
+					break;
+				case rapidjson::kStringType:
+					std::cout << "Value type is string" << std::endl;
+					break;
+				case rapidjson::kNumberType:
+					std::cout << "Value type is number" << std::endl;
+					break;
+				}
 
 				if (!it->value.IsInt())
+				{
+					LOG(LogDebug) << "it->value is not an int ";
 					continue;
+				}
 
 				int gameId = it->value.GetInt();
-
-				if (officialGames.find(gameId) == officialGames.cend())
+				LOG(LogDebug) << "Looking for gameId: " << gameId;
+				if (officialGames.find(gameId) == officialGames.cend()){
+					LOG(LogDebug) << "game NOT found";
 					continue;
+				}
 
 				ret[name] = std::to_string(gameId);
 				LOG(LogDebug) << "game found";
@@ -518,15 +552,14 @@ std::map<std::string, std::string> RetroAchievements::getCheevosHashes()
 		else if (hashLibrary.status() != HttpReq::REQ_SUCCESS)
 			throw std::domain_error("Error while accessing retroachievements hashlibrary :\n" + hashLibrary.getErrorMsg());
 	}
-	catch (const std::exception& e)
+	catch (const std::exception &e)
 	{
 		throw e;
 	}
 	catch (...)
 	{
-
 	}
-LOG(LogDebug) << "returning ret";
+	LOG(LogDebug) << "returning ret";
 	return ret;
 }
 
@@ -545,10 +578,10 @@ std::string RetroAchievements::getCheevosHashFromFile(int consoleId, const std::
 	}
 
 	LOG(LogWarning) << "cheevos -> Unable to extract hash from file :" << fileName;
-	return "00000000000000000000000000000000";	
+	return "00000000000000000000000000000000";
 }
 
-std::string RetroAchievements::getCheevosHash( SystemData* system, const std::string fileName)
+std::string RetroAchievements::getCheevosHash(SystemData *system, const std::string fileName)
 {
 	bool fromZipContents = system->shouldExtractHashesFromArchives();
 
@@ -581,14 +614,15 @@ std::string RetroAchievements::getCheevosHash( SystemData* system, const std::st
 	if (fromZipContents)
 	{
 		tmpZipDirectory = Utils::FileSystem::combine(Utils::FileSystem::getTempPath(), Utils::FileSystem::getStem(fileName));
-		Utils::FileSystem::deleteDirectoryFiles(tmpZipDirectory);		
+		Utils::FileSystem::deleteDirectoryFiles(tmpZipDirectory);
 
 		if (ApiSystem::getInstance()->unzipFile(fileName, tmpZipDirectory))
 		{
 			auto fileList = Utils::FileSystem::getDirContent(tmpZipDirectory, true);
 
 			std::vector<std::string> res;
-			std::copy_if(fileList.cbegin(), fileList.cend(), std::back_inserter(res), [](const std::string file) { return Utils::FileSystem::getExtension(file) != ".txt";  });
+			std::copy_if(fileList.cbegin(), fileList.cend(), std::back_inserter(res), [](const std::string file)
+						 { return Utils::FileSystem::getExtension(file) != ".txt"; });
 
 			if (res.size() == 1)
 				contentFile = *res.cbegin();
@@ -606,7 +640,7 @@ std::string RetroAchievements::getCheevosHash( SystemData* system, const std::st
 	return ret;
 }
 
-bool RetroAchievements::testAccount(const std::string& username, const std::string& password, std::string& error)
+bool RetroAchievements::testAccount(const std::string &username, const std::string &password, std::string &error)
 {
 	if (username.empty() || password.empty())
 	{
