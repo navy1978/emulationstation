@@ -27,7 +27,7 @@ using namespace PlatformIds;
 
 /**
 	List of systems and thein IDs from
-	https://www.screenscraper.fr/api/systemesListe.php?devid=xxx&devpassword=yyy&softname=zzz&output=XML
+	https://api.screenscraper.fr/api2/systemesListe.php?devid=xxx&devpassword=yyy&softname=zzz&output=XML
 **/
 const std::map<PlatformId, unsigned short> screenscraper_platformid_map{
 	{ THREEDO, 29 },
@@ -148,6 +148,8 @@ const std::map<PlatformId, unsigned short> screenscraper_platformid_map{
 	{ SPECTRAVIDEO, 218 },
 	{ PALMOS, 219 },
 	{ DAPHNE, 49 },
+	{ AMERICANLASERGAMES, 170 },
+	{ ACTIONMAX, 81 },
 	{ SOLARUS, 223 },
 	{ PICO8, 234 },
 	{ SUPER_CASSETTE_VISION, 67 },
@@ -166,6 +168,9 @@ const std::map<PlatformId, unsigned short> screenscraper_platformid_map{
 	{ ADAM, 89 },
 	{ PHILIPS_CDI, 133 },
 	{ SUPER_NINTENDO_MSU1, 210 },
+	{ Z_MACHINE, 215 },
+	{ LOWRES_NX, 244 },
+	{ VIRCON32, 272 },
 	{ FMTOWNS, 253 },
 	{ FUJITSU_FM7, 97 },
 	{ CASIO_PV1000, 74 },
@@ -295,7 +300,7 @@ void ScreenScraperScraper::generateRequests(const ScraperSearchParams& params,
 	else
 	{
 		std::string name = Utils::String::replace(params.nameOverride, "_", " ");
-		name = Utils::String::replace(name, "-", " ");		
+		name = Utils::String::replace(name, "-", " ");
 
 		path = ssConfig.getGameSearchUrl(name, true);
 	}
@@ -353,12 +358,12 @@ bool ScreenScraperRequest::process(HttpReq* request, std::vector<ScraperSearchRe
 		std::stringstream ss;
 		ss << "ScreenScraperRequest - Error parsing XML." << std::endl << parseResult.description() << "";
 		std::string err = ss.str();
-		//setError(err); Don't consider it an error -> Request is a success. Simply : Game is not found		
+		//setError(err); Don't consider it an error -> Request is a success. Simply : Game is not found
 		LOG(LogWarning) << err;
-				
+
 		if (Utils::String::toLower(content).find("maximum threads per minute reached") != std::string::npos)
 			return false;
-		
+
 		return true;
 	}
 
@@ -384,7 +389,7 @@ pugi::xml_node ScreenScraperRequest::findMedia(pugi::xml_node media_list, std::s
 
 	// Do an XPath query for media[type='$media_type'], then filter by region
 	// We need to do this because any child of 'medias' has the form
-	// <media type="..." region="..." format="..."> 
+	// <media type="..." region="..." format="...">
 	// and we need to find the right media for the region.
 
 	pugi::xpath_node_set results = media_list.select_nodes((static_cast<std::string>("media[@type='") + mediaName + "']").c_str());
@@ -509,7 +514,7 @@ void ScreenScraperRequest::processGame(const pugi::xml_document& xmldoc, std::ve
 		if (!description.empty())
 			result.mdl.set(MetaDataId::Desc, Utils::String::decodeXmlString(description));
 
-		// Genre fallback language: EN. ( Xpath: Data/jeu[0]/genres/genre[*] )		
+		// Genre fallback language: EN. ( Xpath: Data/jeu[0]/genres/genre[*] )
 		if (game.child("genres"))
 		{
 			bool adultGame = false;
@@ -542,7 +547,7 @@ void ScreenScraperRequest::processGame(const pugi::xml_document& xmldoc, std::ve
 
 				if (strcmp(node.attribute("principale").value(), "1") == 0 && strcmp(node.attribute("langue").value(), language.c_str()) == 0)
 					genre = node.text().get();
-			
+
 				if (strcmp(node.attribute("principale").value(), "0") == 0 && strcmp(node.attribute("langue").value(), language.c_str()) == 0)
 					subgenre = node.text().get();
 			}
@@ -651,7 +656,7 @@ void ScreenScraperRequest::processGame(const pugi::xml_document& xmldoc, std::ve
         if(game.child("systeme").attribute("id"))
         {
             int systemId = game.child("systeme").attribute("id").as_int();
-			
+
 			auto arcadeSystem = ArcadeSystems.find(systemId);
             if(arcadeSystem != ArcadeSystems.cend())
                 result.mdl.set(MetaDataId::ArcadeSystemName, arcadeSystem->second.first);
@@ -665,7 +670,7 @@ void ScreenScraperRequest::processGame(const pugi::xml_document& xmldoc, std::ve
 			ss << ratingVal;
 			result.mdl.set(MetaDataId::Rating, ss.str());
 		}
-		else 
+		else
 			result.mdl.set(MetaDataId::Rating, "-1");
 
 		if (Settings::getInstance()->getBool("ScrapePadToKey") && game.child("sp2kcfg"))
@@ -690,7 +695,7 @@ void ScreenScraperRequest::processGame(const pugi::xml_document& xmldoc, std::ve
 				pugi::xml_node art = findMedia(media_list, ripList, romlang, region);
 				if (art)
 				{
-					// Sending a 'softname' containing space will make the image URLs returned by the API also contain the space. 
+					// Sending a 'softname' containing space will make the image URLs returned by the API also contain the space.
 					//  Escape any spaces in the URL here
 					result.urls[MetaDataId::Image] = ScraperSearchItem(ensureUrl(art.text().get()), art.attribute("format") ? "." + std::string(art.attribute("format").value()) : "");
 
@@ -828,8 +833,8 @@ void ScreenScraperRequest::processGame(const pugi::xml_document& xmldoc, std::ve
 }
 
 std::string ScreenScraperRequest::ScreenScraperConfig::getGameSearchUrl(const std::string gameName, bool jeuRecherche) const
-{	
-	std::string ret = API_URL_BASE
+{
+	std::string ret =  API_URL_BASE
 		+ "/jeuInfos.php?" + std::string(SCREENSCRAPER_DEV_LOGIN) +
 		+ "&softname=" + HttpReq::urlEncode(VERSIONED_SOFT_NAME)
 		+ "&output=xml"
@@ -909,7 +914,7 @@ ScreenScraperUser ScreenScraperRequest::processUserInfo(const pugi::xml_document
 	pugi::xml_node data = xmldoc.child("Data");
 	if (!data.child("ssuser"))
 		return user;
-		
+
 	data = data.child("ssuser");
 
 	if (data.child("id"))
@@ -932,7 +937,7 @@ ScreenScraperUser ScreenScraperRequest::processUserInfo(const pugi::xml_document
 
 	if (data.child("maxrequestskoperday"))
 		user.maxRequestsKoPerDay = data.child("maxrequestskoperday").text().as_int();
-	
+
 	return user;
 }
 
@@ -958,12 +963,12 @@ int ScreenScraperScraper::getThreadCount(std::string &result)
 	if (parseResult)
 	{
 		auto userInfo = ScreenScraperRequest::processUserInfo(doc);
-		
+
 		// userInfo.maxRequestsPerMin / userInfo.maxthreads;
 
 		if (userInfo.maxthreads > 0)
 			return userInfo.maxthreads;
-	}	
+	}
 
 	return 1;
 }

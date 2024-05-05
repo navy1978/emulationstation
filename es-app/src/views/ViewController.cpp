@@ -890,8 +890,13 @@ bool ViewController::input(InputConfig* config, Input input)
 		return true;
 	}
 
+#ifdef _ENABLEAMBERELEC
+	// Emuelec next song
+	if (((mState.viewing != GAME_LIST && config->isMappedTo("leftthumb", input)) || config->isMappedTo("rightthumb", input)) && input.value != 0)
+#else
 	// Next song
 	if (((mState.viewing != GAME_LIST && config->isMappedTo("l3", input)) || config->isMappedTo("r3", input)) && input.value != 0)
+#endif    
 	{		
 		AudioManager::getInstance()->playRandomMusic(false);
 		return true;

@@ -129,7 +129,7 @@ bool SystemConf::saveSystemConf()
 		filein.close();
 	}
 
-	static std::string removeID = "$^é(p$^mpv$êrpver$^vper$vper$^vper$vper$vper$^vperv^pervncvizn";
+	static std::string removeID = "$^Ã©(p$^mpv$Ãªrpver$^vper$vper$^vper$vper$vper$^vperv^pervncvizn";
 
 	int lastTime = SDL_GetTicks();
 
@@ -261,10 +261,10 @@ bool SystemConf::setBool(const std::string &name, bool value)
 bool SystemConf::getIncrementalSaveStates()
 {
 	auto valGSS = SystemConf::getInstance()->get("global.incrementalsavestates");
-	return valGSS != "0" && valGSS != "2";
+	return valGSS != "2"; // AmberELEC
 }
 
 bool SystemConf::getIncrementalSaveStatesUseCurrentSlot()
 {
-	return SystemConf::getInstance()->get("global.incrementalsavestates") == "2";
+	return SystemConf::getInstance()->get("global.incrementalsavestates") == "3"; // AmberELEC
 }

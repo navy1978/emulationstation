@@ -989,6 +989,9 @@ void CollectionSystemManager::populateAutoCollection(CollectionSystemData* sysDa
 			switch (sysDecl.type)
 			{
 			case AUTO_ALL_GAMES:
+#ifdef _ENABLEAMBERELEC
+				include = !(game->getSystemName() == "tools") && !(game->getSystemName() == "imageviewer") && !(game->getSystemName() == "mplayer");
+#endif
 				break;
 			case AUTO_VERTICALARCADE:
 				include = game->isVerticalArcadeGame();
@@ -1087,6 +1090,7 @@ void CollectionSystemManager::populateCustomCollection(CollectionSystemData* sys
 			std::vector<FileData*> games = folder->getFilesRecursive(GAME);
 			for (auto game : games)
 			{
+                if (game->getSystemName() != "mplayer") { //AmberELEC
 				if (sysData->filteredIndex->isSystemSelected(game->getSystemName()))
 					sysData->filteredIndex->addToIndex(game);
 
@@ -1100,6 +1104,7 @@ void CollectionSystemManager::populateCustomCollection(CollectionSystemData* sys
 				}
 			}
 		}
+    }
 
 		updateCollectionFolderMetadata(newSys);
 		return;

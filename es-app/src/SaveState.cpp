@@ -85,7 +85,7 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 
 	if (!isSlotValid())
 	{
-		if (nextSlot > 0 && !SystemConf::getIncrementalSaveStatesUseCurrentSlot() && supportsIncremental)
+		if (nextSlot > 0 && supportsIncremental)
 		{
 			// We start a game normally but there are saved games : Start game on next free slot to avoid loosing a saved game
 			return cmd + " -state_slot " + std::to_string(nextSlot);

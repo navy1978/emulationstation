@@ -71,6 +71,9 @@ namespace Utils
 #if WIN32
 		bool isWindows11();
 #endif
+        #ifdef _ENABLEAMBERELEC
+            std::string getShOutput(const std::string& mStr); /* < emuelec */
+        #endif
 	}
 }
 

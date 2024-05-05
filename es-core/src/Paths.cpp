@@ -63,22 +63,24 @@ Paths::Paths()
 	mKodiPath = "/usr/bin/kodi";
 #endif
 
-/* EmuElec sample locations.
-#ifdef _ENABLEEMUELEC
-	mRootPath = "/storage/roms"; // ?
-	mEmulationStationPath = Utils::FileSystem::getExePath();
-	mUserEmulationStationPath = Utils::FileSystem::getCanonicalPath(Utils::FileSystem::getHomePath() + "/.emulationstation");
-	mLogPath = "/storage/.config/emuelec/logs";
-	mThemesPath = mEmulationStationPath + "/themes";
-	mUserThemesPath = "/emuelec/themes";
+#ifdef _ENABLEAMBERELEC
+	mRootPath = "/storage";
+	mEmulationStationPath = getExePath();
+	mUserEmulationStationPath = Utils::FileSystem::getCanonicalPath(getHomePath() + "/.emulationstation");
+	mLogPath = mUserEmulationStationPath + "/logs";
+	mThemesPath = mUserEmulationStationPath + "/themes";
+	mUserThemesPath = mUserEmulationStationPath + "/themes";
 	mMusicPath = "/storage/roms/BGM";
-	mUserMusicPath = "/storage/.config/emuelec/BGM";
+	mUserMusicPath = "/storage/roms/BGM";
 	mDecorationsPath = "/storage/roms/bezels";
 	mUserDecorationsPath = "/tmp/overlays/bezels";
-	mVersionInfoPath = "/usr/config/EE_VERSION";
-	mSystemConfFilePath = "/storage/.config/emuelec/configs/emuelec.conf";
+	mVersionInfoPath = "/storage/.config/.OS_VERSION";
+	mSystemConfFilePath = "/storage/.config/distribution/configs/distribution.conf";
+	mScreenShotsPath = "/storage/roms/screenshots";
+	mSaveStatesPath = "/storage/roms/savestates";
+    mTimeZonesPath = "/usr/share/zoneinfo/";
+
 #endif
-*/
 	loadCustomConfiguration(true); // Load paths overrides from emulationstation.ini file
 }
 

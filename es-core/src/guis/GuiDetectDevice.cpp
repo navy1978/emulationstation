@@ -91,8 +91,14 @@ bool GuiDetectDevice::input(InputConfig* config, Input input)
 	if (input.device == DEVICE_MOUSE)
 		return true;
 
+#ifdef _ENABLEAMBERELEC
+	if(!mFirstRun && (input.device == DEVICE_KEYBOARD && input.type == TYPE_KEY && input.value && input.id == SDLK_ESCAPE) ||
+	                 (input.device != DEVICE_KEYBOARD && config->isMappedTo("HotKeyEnable", input)))
+#else
 	if(!mFirstRun && (input.device == DEVICE_KEYBOARD && input.type == TYPE_KEY && input.value && input.id == SDLK_ESCAPE) ||
 	                 (input.device != DEVICE_KEYBOARD && config->isMappedTo("hotkey", input))) 
+
+#endif
 	{
 		// cancel configuring
 		PowerSaver::resume();

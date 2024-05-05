@@ -55,7 +55,7 @@ void Settings::updateCachedSetting(const std::string& name)
 	UPDATE_STATIC_BOOL_SETTING(VolumePopup)
 	UPDATE_STATIC_BOOL_SETTING(VSync)
 	UPDATE_STATIC_BOOL_SETTING(PreloadMedias)
-	UPDATE_STATIC_BOOL_SETTING(IgnoreLeadingArticles)		
+	UPDATE_STATIC_BOOL_SETTING(IgnoreLeadingArticles)
 	UPDATE_STATIC_BOOL_SETTING(ShowFoldersFirst)
 	UPDATE_STATIC_INT_SETTING(ScreenSaverTime)
 
@@ -113,7 +113,6 @@ void Settings::setDefaults()
 	mWasChanged = false;
 	mBoolMap.clear();
 	mIntMap.clear();
-
 	mBoolMap["BackgroundJoystickInput"] = false;
 	mBoolMap["ParseGamelistOnly"] = false;
 	mBoolMap["ShowHiddenFiles"] = false;
@@ -121,7 +120,7 @@ void Settings::setDefaults()
 	mBoolMap["IgnoreLeadingArticles"] = Settings::_IgnoreLeadingArticles;
 	mBoolMap["ShowFoldersFirst"] = Settings::_ShowFoldersFirst;
 	mBoolMap["DrawFramerate"] = false;
-	mBoolMap["ScrollLoadMedias"] = false;	
+	mBoolMap["ScrollLoadMedias"] = false;
 	mBoolMap["ShowExit"] = true;
 	mBoolMap["ExitOnRebootRequired"] = false;
 	mBoolMap["Windowed"] = false;
@@ -141,37 +140,42 @@ void Settings::setDefaults()
 #endif
 	mBoolMap["TTS"] = false;
 
+#if defined(RG552)
+	mStringMap["MenuFontScale"] = "1.1";
+	mStringMap["FontScale"] = "1.1";
+	mStringMap["FullScreenMenu"] = "true";
+#endif
+
 	mIntMap["MonitorID"] = -1;
 
-    mBoolMap["UseOSK"] = true; // on screen keyboard
-    mBoolMap["DrawClock"] = Settings::_DrawClock;
+	mBoolMap["UseOSK"] = true; // on screen keyboard
+	mBoolMap["DrawClock"] = false;
 	mBoolMap["ClockMode12"] = Settings::_ClockMode12;
-	mBoolMap["ShowControllerNotifications"] = true;	
-	mBoolMap["ShowControllerActivity"] = Settings::_ShowControllerActivity;
-	mBoolMap["ShowControllerBattery"] = Settings::_ShowControllerBattery;
-    mIntMap["SystemVolume"] = 95;
-    mBoolMap["Overscan"] = false;
-    mStringMap["Language"] = "en_US";
-    mStringMap["INPUT P1"] = "DEFAULT";
-    mStringMap["INPUT P2"] = "DEFAULT";
-    mStringMap["INPUT P3"] = "DEFAULT";
-    mStringMap["INPUT P4"] = "DEFAULT";
-    mStringMap["INPUT P5"] = "DEFAULT";
-    mStringMap["Overclock"] = "none";
+	mBoolMap["ShowControllerActivity"] = false;
+	mBoolMap["ShowControllerBattery"] = false;
+	mIntMap["SystemVolume"] = 95;
+	mBoolMap["Overscan"] = false;
+	mStringMap["Language"] = "en_US";
+	mStringMap["INPUT P1"] = "DEFAULT";
+	mStringMap["INPUT P2"] = "DEFAULT";
+	mStringMap["INPUT P3"] = "DEFAULT";
+	mStringMap["INPUT P4"] = "DEFAULT";
+	mStringMap["INPUT P5"] = "DEFAULT";
+	mStringMap["Overclock"] = "none";
 
 	mBoolMap["VSync"] = Settings::_VSync;
 	mStringMap["FolderViewMode"] = "never";
 	mStringMap["HiddenSystems"] = "";
 
-	mBoolMap["PublicWebAccess"] = false;	
+	mBoolMap["PublicWebAccess"] = false;
 	mBoolMap["FirstJoystickOnly"] = false;
-    mBoolMap["EnableSounds"] = false;
+	mBoolMap["EnableSounds"] = false;
 	mBoolMap["ShowHelpPrompts"] = true;
 	mBoolMap["ScrapeRatings"] = true;
 	mBoolMap["ScrapeNames"] = true;	
 	mBoolMap["ScrapeDescription"] = true;
-	mBoolMap["ScrapePadToKey"] = true;
-	mBoolMap["ScrapeOverWrite"] = true;	
+	mBoolMap["ScrapePadToKey"] = false;
+	mBoolMap["ScrapeOverWrite"] = true;
 	mBoolMap["IgnoreGamelist"] = false;
 	mBoolMap["HideConsole"] = true;
 	mBoolMap["QuickSystemSelect"] = true;
@@ -179,7 +183,7 @@ void Settings::setDefaults()
 	mBoolMap["SaveGamelistsOnExit"] = true;
 	mStringMap["ShowBattery"] = "text";
 	mBoolMap["CheckBiosesAtLaunch"] = true;
-	mBoolMap["RemoveMultiDiskContent"] = true;
+	mBoolMap["RemoveMultiDiskContent"] = false;
 
 	mBoolMap["ShowNetworkIndicator"] = Settings::_ShowNetworkIndicator;
 
@@ -187,19 +191,19 @@ void Settings::setDefaults()
 
 	mBoolMap["InvertButtons"] = false;
 
-	mBoolMap["GameOptionsAtNorth"] = false;
+	mBoolMap["GameOptionsAtNorth"] = true;
 	mBoolMap["LoadEmptySystems"] = false;
-	
+
 	mIntMap["RecentlyScrappedFilter"] = 3;
-	
+
 	mIntMap["ScreenSaverTime"] = Settings::_ScreenSaverTime;
 	mIntMap["ScraperResizeWidth"] = 640;
 	mIntMap["ScraperResizeHeight"] = 0;
 
-#if defined(_WIN32) || defined(TINKERBOARD) || defined(X86) || defined(X86_64) || defined(ODROIDN2) || defined(ODROIDC2) || defined(ODROIDXU4) || defined(RPI4)
+#if defined(_WIN32) || defined(TINKERBOARD) || defined(X86) || defined(X86_64) || defined(ODROIDN2) || defined(ODROIDC2) || defined(ODROIDXU4) || defined(RPI4) || defined(RG552)
 	// Boards > 1Gb RAM
 	mIntMap["MaxVRAM"] = 256;
-#elif defined(ODROIDGOA) || defined(GAMEFORCE) || defined(RK3326) || defined(RPIZERO2) || defined(RPI2) || defined(RPI3) || defined(ROCKPRO64)
+#elif defined(_ENABLEAMBERELEC) || defined(ODROIDGOA) || defined(GAMEFORCE) || defined(RK3326) || defined(RPIZERO2) || defined(RPI2) || defined(RPI3) || defined(ROCKPRO64)
 	// Boards with 1Gb RAM
 	mIntMap["MaxVRAM"] = 128;
 #elif defined(_RPI_)
@@ -211,43 +215,56 @@ void Settings::setDefaults()
 #endif
 
 	mStringMap["TransitionStyle"] = "auto";
-	mStringMap["GameTransitionStyle"] = "auto";
+	mStringMap["GameTransitionStyle"] = "instant";
 
 	mStringMap["ThemeSet"] = "";
-	mStringMap["ScreenSaverBehavior"] = "dim";
+	mStringMap["ScreenSaverBehavior"] = "black";
 	mStringMap["GamelistViewStyle"] = "automatic";
 
 	mStringMap["Scraper"] = "ScreenScraper";
 	mStringMap["ScrapperImageSrc"] = "ss";
-	mStringMap["ScrapperThumbSrc"] = "box-2D";
-	mStringMap["ScrapperLogoSrc"] = "wheel";
-	mBoolMap["ScrapeVideos"] = false;
+	mStringMap["ScrapperThumbSrc"] = "";
+	mStringMap["ScrapperLogoSrc"] = "";
+	mBoolMap["ScrapeVideos"] = true;
 	mBoolMap["ScrapeShortTitle"] = false;
-	
+
 	mBoolMap["ScreenSaverMarquee"] = true;
 	mBoolMap["ScreenSaverControls"] = true;
 	mStringMap["ScreenSaverGameInfo"] = "never";
 	mBoolMap["StretchVideoOnScreenSaver"] = false;
-	mStringMap["PowerSaverMode"] = "default"; 
+	mStringMap["PowerSaverMode"] = "default";
 
-	mBoolMap["StopMusicOnScreenSaver"] = true;
+	mBoolMap["StopMusicOnScreenSaver"] = false;
 
 	mBoolMap["RetroachievementsMenuitem"] = true;
 	mIntMap["ScreenSaverSwapImageTimeout"] = 10000;
 	mBoolMap["SlideshowScreenSaverStretch"] = false;
 	mBoolMap["SlideshowScreenSaverCustomImageSource"] = false;
+#ifdef _ENABLEAMBERELEC
+	mStringMap["SlideshowScreenSaverImageDir"] = "/storage/roms/screenshots"; // AmberELEC
+#endif
 	mStringMap["SlideshowScreenSaverImageFilter"] = ".png,.jpg";
 	mBoolMap["SlideshowScreenSaverRecurse"] = false;
 	mBoolMap["SlideshowScreenSaverGameName"] = true;
 	mStringMap["ScreenSaverDecorations"] = "systems";
 
+#ifdef _ENABLEAMBERELEC
+	mStringMap["LogLevel"] = "minimal";
+	mBoolMap["ShowManualIcon"] = false;
+	mBoolMap["ShowSaveStates"] = true;
+#endif
 	mBoolMap["ShowCheevosIcon"] = true;
 
-	mBoolMap["ShowWheelIconOnGames"] = true;
-	mBoolMap["ShowGunIconOnGames"] = true;
+	mBoolMap["ShowWheelIconOnGames"] = false;
+	mBoolMap["ShowGunIconOnGames"] = false;
 
 	mBoolMap["SlideshowScreenSaverCustomVideoSource"] = false;
+#ifdef _ENABLEAMBERELEC
+	mStringMap["SlideshowScreenSaverVideoDir"] = "/storage/roms/mplayer"; // AmberELEC
+	mStringMap["SlideshowScreenSaverVideoFilter"] = ".mp4,.avi,.mkv,.flv,.mpg,.mov";
+#else
 	mStringMap["SlideshowScreenSaverVideoFilter"] = ".mp4,.avi";
+#endif
 	mBoolMap["SlideshowScreenSaverVideoRecurse"] = false;
 
 	// This setting only applies to raspberry pi but set it for all platforms so
@@ -268,18 +285,18 @@ void Settings::setDefaults()
 	mBoolMap["VideoLowersMusic"] = true;
 	mBoolMap["VolumePopup"] = Settings::_VolumePopup;
 
-	mIntMap["MusicVolume"] = 128;
+	mIntMap["MusicVolume"] = 75;
 
 	// Audio out device for Video playback using OMX player.
 	mStringMap["OMXAudioDev"] = "both";
 	mStringMap["CollectionSystemsAuto"] = "all,favorites"; // 2players,4players,favorites,recent
 	mStringMap["CollectionSystemsCustom"] = "";
-	mBoolMap["SortAllSystems"] = true; 
+	mBoolMap["SortAllSystems"] = true;
 	mStringMap["SortSystems"] = "manufacturer";
-	
+
 	mStringMap["UseCustomCollectionsSystemEx"] = "";
-	
-	mBoolMap["HiddenSystemsShowGames"] = true;
+
+	mBoolMap["HiddenSystemsShowGames"] = false;
 	mBoolMap["CollectionShowSystemInfo"] = true;
 	mBoolMap["FavoritesFirst"] = false;
 
@@ -289,13 +306,17 @@ void Settings::setDefaults()
 	// Audio out device for volume control
 	#ifdef _RPI_
 		mStringMap["AudioDevice"] = "PCM";
+	#elif defined(_ENABLEAMBERELEC) && defined(RG552)
+		mStringMap["AudioDevice"] = "DAC";
+	#elif defined(_ENABLEAMBERELEC)
+		mStringMap["AudioDevice"] = "Playback";
 	#else
 		mStringMap["AudioDevice"] = "Master";
 	#endif
 
 	mStringMap["AudioCard"] = "default";
 	mStringMap["UIMode"] = "Full";
-	mStringMap["UIMode_passkey"] = "aaaba"; 
+	mStringMap["UIMode_passkey"] = "aaaba";
 	mBoolMap["ForceKiosk"] = false;
 	mBoolMap["ForceKid"] = false;
 	mBoolMap["ForceDisableFilters"] = false;
@@ -347,12 +368,12 @@ void Settings::setDefaults()
 	mBoolMap["audio.persystem"] = false;
 	mBoolMap["audio.display_titles"] = true;
 	mBoolMap["audio.thememusics"] = true;
-	mIntMap["audio.display_titles_time"] = 10;
+	mIntMap["audio.display_titles_time"] = 3;
 
 	mBoolMap["NetPlayCheckIndexesAtStart"] = false;
 	mBoolMap["NetPlayShowMissingGames"] = false;
-	
-	mBoolMap["CheevosCheckIndexesAtStart"] = false;	
+
+	mBoolMap["CheevosCheckIndexesAtStart"] = false;
 
 	mBoolMap["AllImagesAsync"] = true;
 
@@ -434,11 +455,11 @@ bool Settings::saveFile()
 		auto def = mDefaultStringMap.find(iter->first);
 		if (def == mDefaultStringMap.cend() && iter->second.empty())
 			continue;
-
+#ifndef _ENABLEAMBERELEC
 		// Value is know and has default value, don't save it
 		if (def != mDefaultStringMap.cend() && def->second == iter->second)
 			continue;
-
+#endif
 		pugi::xml_node node = config.append_child("string");
 		node.append_attribute("name").set_value(iter->first.c_str());
 		node.append_attribute("value").set_value(iter->second.c_str());
@@ -480,7 +501,7 @@ void Settings::loadFile()
 		setFloat(node.attribute("name").as_string(), node.attribute("value").as_float());
 	for(pugi::xml_node node = root.child("string"); node; node = node.next_sibling("string"))
 		setString(node.attribute("name").as_string(), node.attribute("value").as_string());
-	
+
 	// Migrate old preferences
 	auto it = mBoolMap.find("UseCustomCollectionsSystem");
 	if (it != mBoolMap.cend())

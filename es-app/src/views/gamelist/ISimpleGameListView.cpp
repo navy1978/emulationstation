@@ -298,7 +298,7 @@ bool ISimpleGameListView::input(InputConfig* config, Input input)
 		goBack();
 		return true;
 	}
-	else if ((Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedLike(getQuickSystemSelectRightButton(), input)) || config->isMappedLike("r2", input))
+	else if ((Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedLike(getQuickSystemSelectRightButton(), input)) || config->isMappedLike("righttrigger", input))
 	{
 		if (!mPopupSelfReference)
 		{
@@ -308,7 +308,7 @@ bool ISimpleGameListView::input(InputConfig* config, Input input)
 
 		return true;
 	}
-	else if ((Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedLike(getQuickSystemSelectLeftButton(), input)) || config->isMappedLike("l2", input))
+	else if ((Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedLike(getQuickSystemSelectLeftButton(), input)) || config->isMappedLike("lefttrigger", input))
 	{
 		if (!mPopupSelfReference)
 		{

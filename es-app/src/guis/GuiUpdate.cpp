@@ -19,10 +19,12 @@ public:
 		GuiUpdate::state = GuiUpdateState::State::UPDATER_RUNNING;
 
 		mWndNotification = mWindow->createAsyncNotificationComponent();
-
+#ifdef _ENABLEAMBERELEC
+		mWndNotification->updateTitle(_U("\uF019 ") + _("UPDATING AmberELEC"));
+#else
 		auto label = Utils::String::format(_("UPDATING %s").c_str(), ApiSystem::getInstance()->getApplicationName().c_str());
 		mWndNotification->updateTitle(_U("\uF019 ") + label);
-
+#endif
 		mHandle = new std::thread(&ThreadedUpdater::threadUpdate, this);
 	}
 

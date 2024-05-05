@@ -8,7 +8,7 @@
 #include "guis/GuiMsgBox.h"
 #include "SaveStateRepository.h"
 
-#define WINDOW_HEIGHT Renderer::getScreenHeight() * 0.40f
+#define WINDOW_HEIGHT Renderer::getScreenHeight() * 0.5f
 
 static int slots = 6; // 5;
 
@@ -36,31 +36,31 @@ GuiSaveState::GuiSaveState(Window* window, FileData* game, const std::function<v
 
 	addChild(&mBackground);
 	addChild(&mLayout);
-	
+
 	float cellProportion = 1.77;
 	float screenProportion = (float)Renderer::getScreenWidth() / (float)Renderer::getScreenHeight();
 
 	float sh = (float)Math::min(Renderer::getScreenHeight(), Renderer::getScreenWidth());
-	sh = (float) theme->TextSmall.font->getSize() / sh;
+	sh = (float) theme->TextSmall.font->getSize() / sh * 0.8;
 
 	std::string xml =
 		"<theme defaultView=\"Tiles\">"
 		"<formatVersion>7</formatVersion>"
 		"<view name = \"grid\">"
 		"<imagegrid name=\"gamegrid\">"
-		"  <margin>0.01 0.02</margin>"
+		"  <margin>0.015 0.015</margin>"
 		"  <padding>0 0</padding>"
 		"  <scrollDirection>horizontal</scrollDirection>"
 		"  <autoLayout>" + std::to_string(slots * screenProportion / cellProportion) +" 1</autoLayout>"
 		"  <autoLayoutSelectedZoom>1</autoLayoutSelectedZoom>"
 		"  <animateSelection>false</animateSelection>"
-		"  <centerSelection>false</centerSelection>"		
-		"</imagegrid>"		
+		"  <centerSelection>false</centerSelection>"
+		"</imagegrid>"
 		"<gridtile name=\"default\">"
 		"  <backgroundColor>FFFFFF00</backgroundColor>"
-		"  <padding>8 8</padding>"
+		"  <padding>5 5</padding>"
 		"  <imageColor>FFFFFFFF</imageColor>"
-		"</gridtile>"		
+		"</gridtile>"
 		"<gridtile name=\"selected\">"
 		"  <backgroundColor>" + Utils::String::toHexString(theme->Text.selectorColor) + "</backgroundColor>"
 		"</gridtile>"
@@ -71,15 +71,15 @@ GuiSaveState::GuiSaveState(Window* window, FileData* game, const std::function<v
 		"  <fontSize>" + std::to_string(sh) + "</fontSize>"
 		"  <alignment>center</alignment>"
 		"  <singleLineScroll>false</singleLineScroll>"
-		"  <size>1 0.30</size>"
+		"  <size>1 0.35</size>"
 		"</text>"
 		"<text name=\"gridtile:selected\">"
 		"  <color>" + Utils::String::toHexString(theme->Text.selectedColor) + "</color>"
 		"</text>"
 		"<image name=\"gridtile.image\">"
-		"  <linearSmooth>true</linearSmooth>"		
+		"  <linearSmooth>true</linearSmooth>"
 		"  <color>D0D0D0D0</color>"
-		"  <roundCorners>0.02</roundCorners>"		
+		"  <roundCorners>0.02</roundCorners>"
 		"</image>"
 		"<image name=\"gridtile.image:selected\">"
 		"  <color>FFFFFFFF</color>"
@@ -95,8 +95,8 @@ GuiSaveState::GuiSaveState(Window* window, FileData* game, const std::function<v
 	mGrid->applyTheme(mTheme, "grid", "gamegrid", 0);
 	mGrid->setCursorChangedCallback([&](const CursorState& /*state*/) { updateHelpPrompts(); });
 
-	loadGrid();
-	centerWindow();
+		loadGrid();
+		centerWindow();
 }
 
 void GuiSaveState::loadGrid()
@@ -169,7 +169,7 @@ void GuiSaveState::onSizeChanged()
 		float helpBottomSpace = 0; // Renderer::getScreenHeight() - helpBottom;
 
 		float helpTop = help.position.y() - (height * mOrigin.y()); // +height / 2;
-		
+
 		helpSize = helpTop;
 		helpSize = Renderer::getScreenHeight() - helpSize + helpBottomSpace;
 		helpSize = helpSize / mSize.y() + 0.06;
@@ -224,7 +224,7 @@ bool GuiSaveState::input(InputConfig* config, Input input)
 	{
 		if (mGrid->size())
 		{
-			mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), _("YES"), 
+			mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), _("YES"),
 				[this]
 				{
 					
@@ -237,13 +237,13 @@ bool GuiSaveState::input(InputConfig* config, Input input)
 					mRepository->refresh();
 
 					loadGrid();
-				}, 
+				},
 				_("NO"), nullptr));
 		}
 
 		return true;
 	}
-	
+
 	if (input.value != 0 && config->isMappedTo("x", input))
 	{
 		if (mGrid->size())
@@ -255,15 +255,15 @@ bool GuiSaveState::input(InputConfig* config, Input input)
 			{				
 				if (toCopy.saveState->copyToSlot(slot))
 				{
-					mRepository->refresh();
-					loadGrid();
+				mRepository->refresh();
+				loadGrid();
 				}
 			}
 		}
 
 		return true;
 	}
-	
+
 	return GuiComponent::input(config, input);
 }
 

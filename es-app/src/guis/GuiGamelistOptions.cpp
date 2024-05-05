@@ -101,6 +101,11 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 				mJumpToLetterList = std::make_shared<LetterList>(mWindow, _("JUMP TO GAME BEGINNING WITH THE LETTER"), false);
 
 				char curChar = (char)toupper(getGamelist()->getCursor()->getName()[0]);
+#ifdef _ENABLEAMBERELEC				
+				unsigned int sortId = system->getSortId();
+				if (sortId == FileSorts::SORTNAME_ASCENDING || sortId == FileSorts::SORTNAME_DESCENDING)
+					curChar = (char)toupper(getGamelist()->getCursor()->getSortOrName()[0]);
+#endif
 
 				if (std::find(letters.begin(), letters.end(), std::string(1, curChar)) == letters.end())
 					curChar = letters.at(0)[0];
@@ -137,6 +142,21 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 		{
 			const FileSorts::SortType& sort = FileSorts::getSortTypes().at(i);
 			mListSort->add(sort.icon + sort.description, sort.id, sort.id == currentSortId); // TODO - actually make the sort type persistent
+#ifdef _ENABLEAMBERELEC			
+			if (i == (FileSorts::getSortTypes().size()-3))
+				break;
+			if (i == FileSorts::FILENAME_DESCENDING)
+			{
+			  {
+					const FileSorts::SortType& st = FileSorts::getSortTypes().at(FileSorts::SORTNAME_ASCENDING);
+					mListSort->add(st.icon + st.description, st.id, st.id == currentSortId);
+				}
+				{
+					const FileSorts::SortType& st = FileSorts::getSortTypes().at(FileSorts::SORTNAME_DESCENDING);
+					mListSort->add(st.icon + st.description, st.id, st.id == currentSortId);
+				}
+			}
+#endif
 		}
 
 		mMenu.addWithLabel(_("SORT GAMES BY"), mListSort);	
@@ -485,6 +505,16 @@ void GuiGamelistOptions::openMetaDataEd()
 		std::bind(&ViewController::onFileChanged, ViewController::get(), file, FILE_METADATA_CHANGED), deleteBtnFunc, file));
 }
 
+#ifdef _ENABLEAMBERELEC
+char getSortLetter(int sortId, FileData* fData) {
+	if (sortId == FileSorts::SORTNAME_ASCENDING || sortId == FileSorts::SORTNAME_DESCENDING)	
+		return toupper(fData->getSortOrName()[0]);
+	if (sortId == FileSorts::FILENAME_ASCENDING || sortId == FileSorts::FILENAME_DESCENDING)	
+		return toupper(fData->getName()[0]);
+	return 0;
+}
+#endif
+
 void GuiGamelistOptions::jumpToLetter()
 {
 	char letter = mJumpToLetterList->getSelected();
@@ -492,9 +522,26 @@ void GuiGamelistOptions::jumpToLetter()
 
 	if (mListSort->getSelected() != 0)
 	{
+#ifdef _ENABLEAMBERELEC
+				int nameSorts[4] = {
+					FileSorts::FILENAME_ASCENDING,
+					FileSorts::FILENAME_DESCENDING,
+					FileSorts::SORTNAME_ASCENDING,
+					FileSorts::SORTNAME_DESCENDING};
+				int val = mListSort->getSelected();
+				if (std::find(std::begin(nameSorts), std::end(nameSorts), val) != std::end(nameSorts))
+				{
+					mSystem->setSortId(val);
+				}
+				else {
+					mListSort->selectFirstItem();
+					mSystem->setSortId(0);
+				}
+#else
 		mListSort->selectFirstItem();
 		mSystem->setSortId(0);
-		
+#endif
+
 		FolderData* root = mSystem->getRootFolder();
 		if (root != nullptr)
 			gamelist->onFileChanged(root, FILE_SORTED);

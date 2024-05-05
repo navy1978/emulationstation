@@ -30,7 +30,7 @@ public:
 
 	bool input(InputConfig* config, Input input) override;
 	void onSizeChanged() override;
-	std::vector<HelpPrompt> getHelpPrompts() override;	
+	std::vector<HelpPrompt> getHelpPrompts() override;
 	static void openQuitMenu_static(Window *window, bool quickAccessMenu = false, bool animate = true);
 
 	static void popSystemConfigurationGui(Window* mWindow, SystemData *systemData);
@@ -45,23 +45,29 @@ private:
 	void addEntry(const std::string& name, bool add_arrow, const std::function<void()>& func, const std::string iconName = "");
 	void addVersionInfo();
 	void openCollectionSystemSettings();
-	void openConfigInput();	
+	void openConfigInput();
 	void openScraperSettings();
-	void openScreensaverOptions();	
+	void openScreensaverOptions();
 	void openSoundSettings();
 	void openUISettings();
 	void openUpdatesSettings();
-	
+
+#ifdef _ENABLEAMBERELEC
+	static void openDangerZone(Window* mWindow, std::string configName);
+	static void openPerformanceSettingsConfiguration(Window* mWindow, std::string configName, int selectItem = -1);
+	static void openDecorationConfiguration(Window *mWindow, std::string configName, std::vector<DecorationSetInfo> sets);
+#endif
+
 	void openSystemSettings();
-	void openGamesSettings();	
-	void openNetworkSettings(bool selectWifiEnable = false);	
+	void openGamesSettings();
+	void openNetworkSettings(bool selectWifiEnable = false);
 	void openQuitMenu();
 	void openSystemInformations();
 	void openServicesSettings();
 	void openMultiScreensSettings();
 	void openDmdSettings();
 	void openDeveloperSettings();
-	void openNetplaySettings(); 
+	void openNetplaySettings();
 	void openRetroachievementsSettings();
 	void openMissingBiosSettings();
 	void openFormatDriveSettings();

@@ -178,6 +178,8 @@ namespace Utils
 		{
 #ifdef WIN32 // windows
 			return system("shutdown -s -t 0");
+#elif defined (_ENABLEAMBERELEC)
+			return system("show_splash.sh ; sync ; systemctl poweroff");
 #else // osx / linux	
 			return system("shutdown -h now");
 #endif
@@ -187,6 +189,8 @@ namespace Utils
 		{
 #ifdef WIN32 // windows	
 			return system("shutdown -r -t 0");
+#elif defined (_ENABLEAMBERELEC)
+			return system("show_splash.sh ; sync ; systemctl reboot");
 #else // osx / linux	
 			return system("shutdown -r now");
 #endif
@@ -316,7 +320,7 @@ namespace Utils
 					inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
 
 					std::string ifName = ifa->ifa_name;
-					if (ifName.find("eth") != std::string::npos || ifName.find("wlan") != std::string::npos || ifName.find("mlan") != std::string::npos || ifName.find("en") != std::string::npos || ifName.find("wl") != std::string::npos || ifName.find("p2p") != std::string::npos)
+					if (ifName.find("eth") != std::string::npos || ifName.find("wlan") != std::string::npos || ifName.find("usb") != std::string::npos || ifName.find("mlan") != std::string::npos || ifName.find("en") != std::string::npos || ifName.find("wl") != std::string::npos || ifName.find("p2p") != std::string::npos)
 					{
 						result = std::string(addressBuffer);
 						break;
@@ -339,7 +343,7 @@ namespace Utils
 						inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
 
 						std::string ifName = ifa->ifa_name;
-						if (ifName.find("eth") != std::string::npos || ifName.find("wlan") != std::string::npos || ifName.find("mlan") != std::string::npos || ifName.find("en") != std::string::npos || ifName.find("wl") != std::string::npos || ifName.find("p2p") != std::string::npos)
+						if (ifName.find("eth") != std::string::npos || ifName.find("wlan") != std::string::npos || ifName.find("usb") != std::string::npos || ifName.find("mlan") != std::string::npos || ifName.find("en") != std::string::npos || ifName.find("wl") != std::string::npos || ifName.find("p2p") != std::string::npos)
 						{
 							result = std::string(addressBuffer);
 							break;
@@ -522,6 +526,26 @@ namespace Utils
 		}
 #endif
 
+#ifdef _ENABLEAMBERELEC
+/* < emuelec */
+std::string getShOutput(const std::string& mStr)
+{
+    std::string result, file;
+    FILE* pipe{popen(mStr.c_str(), "r")};
+    char buffer[256];
+
+    while(fgets(buffer, sizeof(buffer), pipe) != NULL)
+    {
+        file = buffer;
+        result += file.substr(0, file.size() - 1);
+    }
+
+    pclose(pipe);
+    return result;
+}
+/* emuelec >*/
+#endif
+
 		std::string getArchString()
 		{
 #if WIN32
@@ -530,6 +554,30 @@ namespace Utils
 			std::string arch = Utils::FileSystem::readAllText("/usr/share/batocera/batocera.arch");
 			if (!arch.empty())
 				return arch;
+
+#if RG351P
+			return "amberelec-rg351p";
+#endif
+
+#if RG351V
+			return "amberelec-rg351v";
+#endif
+
+#if RG351MP
+			return "amberelec-rg351mp";
+#endif
+
+#if RG552
+			return "amberelec-rg552";
+#endif
+
+#if RG353
+			return "amberelec-rg353";
+#endif
+
+#if RG503
+			return "amberelec-rg503";
+#endif
 
 #if X86
 			return "x86";

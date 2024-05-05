@@ -74,7 +74,7 @@ public:
 		}
 	}
 
-	void run()	
+	void run()
 	{
 		mMainLoop = pa_mainloop_new();
 		pa_mainloop_api* pa_mlapi = pa_mainloop_get_api(mMainLoop);
@@ -102,16 +102,16 @@ private:
 		PulseAudioControl* pThis = (PulseAudioControl*)userdata;
 	}
 
-	static void simple_callback(pa_context *c, int success, void *userdata) 
+	static void simple_callback(pa_context *c, int success, void *userdata)
 	{
-  		if (!success) 
+  		if (!success)
 		{
-			LOG(LogError) << "PulseAudioControl Failure : " << pa_strerror(pa_context_errno(c));    		
+			LOG(LogError) << "PulseAudioControl Failure : " << pa_strerror(pa_context_errno(c));
 			quit(userdata, 1);
   		}
 	}
 
-	static void get_sink_volume_callback(pa_context *c, const pa_sink_info *i, int is_last, void *userdata) 
+	static void get_sink_volume_callback(pa_context *c, const pa_sink_info *i, int is_last, void *userdata)
 	{
 		PulseAudioControl* pThis = (PulseAudioControl*)userdata;
 
@@ -120,25 +120,25 @@ private:
 		if (is_last == 0)
 		{
 			pThis->mMute = i->mute;
-			pThis->mVolume = (unsigned)(((uint64_t) i->volume.values[channel] * 100 + (uint64_t)PA_VOLUME_NORM / 2) / (uint64_t)PA_VOLUME_NORM);		
+			pThis->mVolume = (unsigned)(((uint64_t) i->volume.values[channel] * 100 + (uint64_t)PA_VOLUME_NORM / 2) / (uint64_t)PA_VOLUME_NORM);
 		}
 	}
 
-	static void set_sink_volume_callback(pa_context *c, const pa_sink_info *i, int is_last, void *userdata) 
+	static void set_sink_volume_callback(pa_context *c, const pa_sink_info *i, int is_last, void *userdata)
 	{
 		PulseAudioControl* pThis = (PulseAudioControl*)userdata;
 
 		pa_cvolume cv;
 
 		if (is_last == 0)
-		{	
+		{
 			pa_cvolume_set(&cv, i->channel_map.channels, (pa_volume_t) (pThis->mVolume * (double) PA_VOLUME_NORM / 100));
 			pa_operation_unref(pa_context_set_sink_volume_by_name(c, DEFAULT_SINK_NAME, &cv, simple_callback, NULL));
 		}
 	}
 
-	static void subscribe_callback(pa_context *c, pa_subscription_event_type_t type, uint32_t idx, void *userdata) 
-	{		
+	static void subscribe_callback(pa_context *c, pa_subscription_event_type_t type, uint32_t idx, void *userdata)
+	{
 		unsigned facility = type & PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
 		pa_operation *o = NULL;
 
@@ -149,7 +149,7 @@ private:
 		}
 	}
 
-	static void context_state_callback(pa_context *c, void *userdata) 
+	static void context_state_callback(pa_context *c, void *userdata)
 	{
 		PulseAudioControl* pThis = (PulseAudioControl*)userdata;
 
@@ -170,13 +170,13 @@ private:
 			break;
 
 		case PA_CONTEXT_TERMINATED:
-			LOG(LogDebug) << "PulseAudioControl Context terminated";    		
+			LOG(LogDebug) << "PulseAudioControl Context terminated";
 			pThis->mReady = 0;
 			break;
 
 		case PA_CONTEXT_FAILED:
 		default:
-			LOG(LogError) << "PulseAudioControl Connection failure : " << pa_strerror(pa_context_errno(c));    		
+			LOG(LogError) << "PulseAudioControl Connection failure : " << pa_strerror(pa_context_errno(c));
 			pThis->mReady = 0;
 			pThis->FireEvent();
 
@@ -203,7 +203,7 @@ private:
 	std::thread*	mThread;
 
 	std::mutex					mLock;
-	std::condition_variable		mEvent;		
+	std::condition_variable		mEvent;
 
 	pa_context* 	mContext;
     pa_mainloop* 	mMainLoop;
@@ -214,7 +214,7 @@ static PulseAudioControl PulseAudio;
 #endif
 
 #if defined(__linux__)
-#if defined(_RPI_) || defined(_VERO4K_)
+#if defined(_RPI_) || defined(_VERO4K_) || defined(_ENABLEAMBERELEC)
 		std::string VolumeControl::mixerName = "PCM";
 #else
 		std::string VolumeControl::mixerName = "Master";
@@ -409,7 +409,7 @@ void VolumeControl::init()
 			}
 		}
 	}
-	else 
+	else
 	{
 		//Windows Vista or above. use EndpointVolume API. get device enumerator
 		if (endpointVolume == nullptr)
@@ -499,7 +499,7 @@ int VolumeControl::getVolume() const
 			snd_mixer_handle_events(mixerHandle);
 		/*
 		int mute_state;
-		if (snd_mixer_selem_has_playback_switch(mixerElem)) 
+		if (snd_mixer_selem_has_playback_switch(mixerElem))
 		{
 			snd_mixer_selem_get_playback_switch(mixerElem, SND_MIXER_SCHN_UNKNOWN, &mute_state);
 			if (!mute_state) // system Muted
@@ -543,7 +543,7 @@ int VolumeControl::getVolume() const
 		mixerControlDetails.paDetails = &value;
 		mixerControlDetails.cbDetails = sizeof(MIXERCONTROLDETAILS_UNSIGNED);
 
-		if (mixerGetControlDetails((HMIXEROBJ)mixerHandle, &mixerControlDetails, MIXER_GETCONTROLDETAILSF_VALUE) == MMSYSERR_NOERROR) 
+		if (mixerGetControlDetails((HMIXEROBJ)mixerHandle, &mixerControlDetails, MIXER_GETCONTROLDETAILSF_VALUE) == MMSYSERR_NOERROR)
 			volume = (int)Math::round((value.dwValue * 100) / 65535.0f);
 	}
 	else if (endpointVolume != nullptr)
@@ -607,7 +607,7 @@ void VolumeControl::setVolume(int volume)
 		{
 			//ok. bring into minVolume-maxVolume range and set
 			long rawVolume = (volume * (maxVolume - minVolume) / 100) + minVolume;
-			if (snd_mixer_selem_set_playback_volume(mixerElem, SND_MIXER_SCHN_FRONT_LEFT, rawVolume) < 0 
+			if (snd_mixer_selem_set_playback_volume(mixerElem, SND_MIXER_SCHN_FRONT_LEFT, rawVolume) < 0
 				|| snd_mixer_selem_set_playback_volume(mixerElem, SND_MIXER_SCHN_FRONT_RIGHT, rawVolume) < 0)
 			{
 				LOG(LogError) << "VolumeControl::getVolume() - Failed to set mixer volume!";

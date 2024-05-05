@@ -25,6 +25,9 @@
 #include "Splash.h"
 #include "PowerSaver.h"
 #include "renderers/Renderer.h"
+#ifdef _ENABLEAMBERELEC
+#include "utils/FileSystemUtil.h"
+#endif
 
 #if WIN32
 #include <SDL_syswm.h>
@@ -165,7 +168,6 @@ bool Window::init(bool initRenderer, bool initInputManager)
 	// update our help because font sizes probably changed
 	if (peekGui())
 		peekGui()->updateHelpPrompts();
-
 	return true;
 }
 
@@ -296,7 +298,7 @@ void Window::displayNotificationMessage(std::string message, int duration)
 	{
 		duration = Settings::getInstance()->getInt("audio.display_titles_time");
 		if (duration <= 2 || duration > 120)
-			duration = 10;
+			duration = 3;
 
 		duration *= 1000;
 	}
@@ -737,7 +739,21 @@ void Window::render()
 
 	unsigned int screensaverTime = (unsigned int)Settings::ScreenSaverTime();
 	if (mTimeSinceLastInput >= screensaverTime && screensaverTime != 0)
-		startScreenSaver();
+	{
+		// If we just woke up from sleep, treat that like a button press
+		// and restart the screensaver timer
+		auto lastResumeFile = "/run/.last_sleep_time";
+		if (Utils::FileSystem::exists(lastResumeFile))
+		{
+			mTimeSinceLastInput = 0;
+			Utils::FileSystem::removeFile(lastResumeFile);
+			return;
+		}
+		else 
+		{
+			startScreenSaver();
+		}
+	}
 
 	// Render notifications
 	if (!mRenderScreenSaver)

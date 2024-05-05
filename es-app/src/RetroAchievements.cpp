@@ -98,7 +98,7 @@ const std::map<PlatformId, unsigned short> cheevosConsoleID
 	{ UZEBOX, RC_CONSOLE_UZEBOX }
 };
 
-const std::set<unsigned short> consolesWithmd5hashes 
+const std::set<unsigned short> consolesWithmd5hashes
 {
 	RC_CONSOLE_APPLE_II,
 	RC_CONSOLE_ATARI_2600,	
@@ -153,7 +153,7 @@ std::string GameInfoAndUserProgress::getImageUrl(const std::string& image)
 {
 	if (image.empty())
 		return "http://i.retroachievements.org" + ImageIcon;
-	
+
 	return "http://i.retroachievements.org" + image;
 }
 
@@ -172,10 +172,10 @@ int jsonInt(const rapidjson::Value& val, const std::string& name)
 		return 0;
 
 	const rapidjson::Value& value = val[name.c_str()];
-	
+
 	if (value.IsInt())
 		return value.GetInt();
-	
+
 	if (value.IsString())
 		return Utils::String::toInteger(value.GetString());
 
@@ -459,7 +459,7 @@ RetroAchievementInfo RetroAchievements::toRetroAchivementInfo(UserSummary& ret)
 	for (auto played : ret.RecentlyPlayed)
 	{
 		RetroAchievementGame rg;
-		rg.id = played.GameID;		
+		rg.id = played.GameID;
 
 		if (!played.ImageIcon.empty())
 			rg.badge = "http://i.retroachievements.org" + played.ImageIcon;

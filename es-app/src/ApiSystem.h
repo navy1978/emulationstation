@@ -219,7 +219,7 @@ public:
 	virtual std::pair<std::string,int> installBatoceraTheme(std::string thname, const std::function<void(const std::string)>& func = nullptr);
 	virtual std::pair<std::string, int> uninstallBatoceraBezel(std::string bezelsystem, const std::function<void(const std::string)>& func = nullptr);
 
-    virtual std::vector<BatoceraBezel> getBatoceraBezelsList();
+	virtual std::vector<BatoceraBezel> getBatoceraBezelsList();
 	virtual std::pair<std::string,int> installBatoceraBezel(std::string bezelsystem, const std::function<void(const std::string)>& func = nullptr);
 	virtual std::pair<std::string,int> uninstallBatoceraTheme(std::string bezelsystem, const std::function<void(const std::string)>& func = nullptr);
 
@@ -242,8 +242,8 @@ public:
 
 	void callBatoceraPreGameListsHook();
 
-	bool	getBrightness(int& value);
-	void	setBrightness(int value);
+	bool getBrightness(int& value);
+	void setBrightness(int value);
 
 	std::vector<std::string> getWifiNetworks(bool scan = false);
 
@@ -258,7 +258,7 @@ public:
 	virtual std::vector<std::string> getRetroachievementsSoundsList();
 	virtual std::vector<std::string> getVideoFilterList(const std::string& systemName, const std::string& emulator, const std::string& core);
 	virtual std::vector<std::string> getShaderList(const std::string& systemName, const std::string& emulator, const std::string& core);
-	virtual std::string getSevenZipCommand() { return "7zr"; }
+	virtual std::string getSevenZipCommand() { return "/usr/bin/7z"; }
 
 	virtual std::vector<std::string> getTimezones();
 	virtual std::string getCurrentTimezone();

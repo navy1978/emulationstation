@@ -53,6 +53,15 @@ if(WIN32)
 	endif()
 endif()
 
+# AmberELEC
+option(ENABLE_AMBERELEC "Set to ON to enable AmberELEC changes" ${ENABLE_AMBERELEC})
+option(RG351P "Set to ON to enable Anbernic RG351P specific changes" ${RG351P})
+option(RG351V "Set to ON to enable Anbernic RG351V specific changes" ${RG351V})
+option(RG351MP "Set to ON to enable Anbernic RG351MP specific changes" ${RG351MP})
+option(RG552 "Set to ON to enable Anbernic RG552 specific changes" ${RG552})
+option(RG353 "Set to ON to enable Anbernic RG353 specific changes" ${RG353})
+option(RG503 "Set to ON to enable Anbernic RG503 specific changes" ${RG503})
+
 project(emulationstation-all)
 
 # Win32 custom directories assignation
@@ -87,6 +96,37 @@ LIST(APPEND CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Packages
 )
 
+# AmberELEC
+if("${ENABLE_AMBERELEC}" STREQUAL "1")
+  add_definitions(-D_ENABLEAMBERELEC)
+endif()
+
+if("${RG351P}" STREQUAL "1")
+  add_definitions(-DRG351P)
+endif()
+
+if("${RG351V}" STREQUAL "1")
+  add_definitions(-DRG351V)
+endif()
+
+if("${RG351MP}" STREQUAL "1")
+  add_definitions(-DRG351MP)
+endif()
+
+if("${RG552}" STREQUAL "1")
+  add_definitions(-DRG552)
+endif()
+
+if("${RG353}" STREQUAL "1")
+  add_definitions(-DRG353)
+endif()
+
+if("${RG503}" STREQUAL "1")
+  add_definitions(-DRG503)
+endif()
+
+# batocera / kodi menu
+# disable kodi
 if(BATOCERA)
   MESSAGE("Batocera build")
   add_definitions(-DBATOCERA)
@@ -227,24 +267,24 @@ if(CEC)
   endif()
 endif()
 
-if(DEFINED SCREENSCRAPER_SOFTNAME)
-    add_definitions(-DSCREENSCRAPER_SOFTNAME="${SCREENSCRAPER_SOFTNAME}")
+if(DEFINED ENV{SCREENSCRAPER_SOFTNAME})
+    add_definitions(-DSCREENSCRAPER_SOFTNAME="$ENV{SCREENSCRAPER_SOFTNAME}")
 endif()
 
-if(DEFINED SCREENSCRAPER_DEV_LOGIN)
-    add_definitions(-DSCREENSCRAPER_DEV_LOGIN="${SCREENSCRAPER_DEV_LOGIN}")
+if(DEFINED ENV{SCREENSCRAPER_DEV_LOGIN})
+    add_definitions(-DSCREENSCRAPER_DEV_LOGIN="$ENV{SCREENSCRAPER_DEV_LOGIN}")
 endif()
 
-if(DEFINED GAMESDB_APIKEY)
-    add_definitions(-DGAMESDB_APIKEY="${GAMESDB_APIKEY}")
+if(DEFINED ENV{GAMESDB_APIKEY})
+    add_definitions(-DGAMESDB_APIKEY="$ENV{GAMESDB_APIKEY}")
 endif()
 
-if(DEFINED CHEEVOS_DEV_LOGIN)
-    add_definitions(-DCHEEVOS_DEV_LOGIN="${CHEEVOS_DEV_LOGIN}")
+if(DEFINED ENV{CHEEVOS_DEV_LOGIN})
+    add_definitions(-DCHEEVOS_DEV_LOGIN="$ENV{CHEEVOS_DEV_LOGIN}")
 endif()
 
-if(DEFINED HFS_DEV_LOGIN)
-    add_definitions(-DHFS_DEV_LOGIN="${HFS_DEV_LOGIN}")
+if(DEFINED ENV{HFS_DEV_LOGIN})
+    add_definitions(-DHFS_DEV_LOGIN="$ENV{HFS_DEV_LOGIN}")
 endif()
 
 #-------------------------------------------------------------------------------
@@ -270,8 +310,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-attributes -O0") #support C++14 for std::, optimize
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O0")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-attributes -O3") #support C++14 for std::, optimize
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O3")  #-s = strip binary
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -w -Ofast") #support C++14 for std::, optimize
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Ofast")  #-s = strip binary
 endif()
 endif()
 
@@ -290,7 +330,7 @@ set(COMMON_INCLUDE_DIRS
     ${FreeImage_INCLUDE_DIRS}
     # batocera / background musics
     ${SDLMIXER_INCLUDE_DIR}
-    # batocera / customisations    
+    # batocera / customisations
     ${SDL2_INCLUDE_DIR}
     ${CURL_INCLUDE_DIR}
     ${VLC_INCLUDE_DIR}
@@ -373,13 +413,13 @@ set(COMMON_LIBRARIES
     ${SDL2_LIBRARY}
     # batocera / background musics
     ${SDLMIXER_LIBRARY}
-    # batocera / customisations    
+    # batocera / customisations
     ${CURL_LIBRARIES}
     ${VLC_LIBRARIES}
     pugixml
     nanosvg
     id3v2
-	libcheevos	
+	libcheevos
 )
 
 if(UDEV_FOUND)

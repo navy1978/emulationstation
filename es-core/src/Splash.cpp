@@ -91,7 +91,9 @@ Splash::Splash(Window* window, const std::string image, bool fullScreenBackGroun
 		mText.setColor(0xFFFFFFD0);
 	else
 		mText.setColor(0xFFFFFFFF);
-
+#ifdef _ENABLEAMBERELEC
+		mText.setColor(0xFFFFFF00);
+#endif
 	mText.setHorizontalAlignment(ALIGN_CENTER);
 	mText.setFont(font);
 
@@ -120,8 +122,13 @@ Splash::Splash(Window* window, const std::string image, bool fullScreenBackGroun
 		mText.applyTheme(theme, "splash", "label", ThemeFlags::ALL ^ (ThemeFlags::TEXT));
 	else if (fullScreenBackGround)
 	{
-		mText.setGlowColor(0x00000020);
+#ifdef _ENABLEAMBERELEC
+		mText.setGlowColor(0x00000010);
+		mText.setGlowSize(1);	
+#else	
+		mText.setGlowColor(0x00000020);	
 		mText.setGlowSize(2);
+#endif
 		mText.setGlowOffset(1, 1);
 	}
 
@@ -172,6 +179,10 @@ Splash::Splash(Window* window, const std::string image, bool fullScreenBackGroun
 	{
 		mActiveProgressbar.setColorShift(0xDF1010FF);
 		mActiveProgressbar.setColorShiftEnd(0x4F0000FF);
+#ifdef _ENABLEAMBERELEC
+		mActiveProgressbar.setColorShift(0xFFFFFFFF);
+		mActiveProgressbar.setColorShiftEnd(0xFFFFFFFF);
+#endif
 	}
 
 	mActiveProgressbar.setColorGradientHorizontal(true);

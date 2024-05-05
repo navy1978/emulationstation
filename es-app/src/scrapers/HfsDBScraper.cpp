@@ -130,6 +130,8 @@ const std::map<PlatformId, std::string> hfsdb_platformids
 	{ XBOX, "144719" },
 	{ ZX81, "190538" },
 	{ ZX_SPECTRUM, "100295" },
+	{ AMERICANLASERGAMES, "75549" },
+	{ ACTIONMAX, "136148" },
 	{ FUJITSU_FM7, "240860" },
 	{ CASIO_PV1000, "190512" },
 	{ ENTEX_ADVENTURE_VISION, "35850" },

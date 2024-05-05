@@ -62,6 +62,10 @@ FileData* FileData::mRunningGame = nullptr;
 FileData::FileData(FileType type, const std::string& path, SystemData* system)
 	: mPath(path), mType(type), mSystem(system), mParent(nullptr), mDisplayName(nullptr), mMetadata(type == GAME ? GAME_METADATA : FOLDER_METADATA) // metadata is REALLY set in the constructor!
 {
+#ifdef _ENABLEAMBERELEC
+    mSortName = nullptr;
+#endif
+
 	// metadata needs at least a name field (since that's what getName() will return)
 	if (mMetadata.get(MetaDataId::Name).empty() && !mPath.empty())
 		mMetadata.set(MetaDataId::Name, getDisplayName());
@@ -131,6 +135,11 @@ FileData::~FileData()
 {
 	if (mDisplayName)
 		delete mDisplayName;
+
+#ifdef _ENABLEAMBERELEC
+    if (mSortName)
+        delete mSortName;
+#endif
 
 	if (mParent)
 		mParent->removeChild(this);
@@ -321,6 +330,27 @@ const std::string& FileData::getName()
 
 	return mMetadata.getName();
 }
+
+#ifdef _ENABLEAMBERELEC
+
+const std::string& FileData::getSortName()
+{
+    if (mSortName == nullptr)
+    {
+        mSortName = new std::string( getMetadata(MetaDataId::SortName));
+    }
+    return *mSortName;
+}
+
+const std::string FileData::getSortOrName()
+{
+	std::string s( getSortName());
+  if (!s.empty())
+    return s;
+  return getName();
+}
+
+#endif
 
 const std::string FileData::getVideoPath()
 {
@@ -589,7 +619,11 @@ std::string FileData::getlaunchCommand(LaunchGameOptions& options, bool includeC
 			command = Utils::String::replace(command, "%NETPLAY%", "--connect " + options.ip + " --port " + std::to_string(options.port) + " --nick " + SystemConf::getInstance()->get("global.netplay.nickname"));
 		else
 #endif
+#ifdef _ENABLEAMBERELEC
+		command = Utils::String::replace(command, "%NETPLAY%", "--netplaymode " + mode + " --connect " + options.ip + " --port " + std::to_string(options.port) + " --nick " + SystemConf::getInstance()->get("global.netplay.nickname") + " --pass" + pass);
+#else
 			command = Utils::String::replace(command, "%NETPLAY%", "-netplaymode " + mode + " -netplayport " + std::to_string(options.port) + " -netplayip " + options.ip + session + pass);
+#endif
 	}
 	else if (options.netPlayMode == SERVER)
 	{
@@ -598,7 +632,11 @@ std::string FileData::getlaunchCommand(LaunchGameOptions& options, bool includeC
 			command = Utils::String::replace(command, "%NETPLAY%", "--host --port " + SystemConf::getInstance()->get("global.netplay.port") + " --nick " + SystemConf::getInstance()->get("global.netplay.nickname"));
 		else
 #endif
+#ifdef _ENABLEAMBERELEC
+			command = Utils::String::replace(command, "%NETPLAY%", "--host --port " + SystemConf::getInstance()->get("global.netplay.port") + " --nick " + SystemConf::getInstance()->get("global.netplay.nickname"));
+#else
 			command = Utils::String::replace(command, "%NETPLAY%", "-netplaymode host");
+#endif
 	}
 	else
 		command = Utils::String::replace(command, "%NETPLAY%", "");
@@ -750,6 +788,9 @@ bool FileData::launchGame(Window* window, LaunchGameOptions options)
 		gameToUpdate->setMetadata(MetaDataId::LastPlayed, Utils::Time::DateTime(Utils::Time::now()));
 		CollectionSystemManager::get()->refreshCollectionSystems(gameToUpdate);
 		saveToGamelistRecovery(gameToUpdate);
+	} else {
+		// show AmberELEC error message
+		LOG(LogWarning) << "...Show Error message! exit code " << exitCode << "!";
 	}
 
 	window->reactivateGui();
@@ -758,10 +799,10 @@ bool FileData::launchGame(Window* window, LaunchGameOptions options)
 		AudioManager::getInstance()->changePlaylist(system->getTheme(), true);
 	else
 		AudioManager::getInstance()->playRandomMusic();
-
+#ifndef _ENABLEAMBERELEC // EmuELEC has its own error checking
 	if (exitCode >= 200 && exitCode <= 300)
 		window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED") + ":\r\n" + getMessageFromExitCode(exitCode), _("OK"), nullptr, GuiMsgBoxIcon::ICON_ERROR));
-
+#endif
 	return exitCode == 0;
 }
 

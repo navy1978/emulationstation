@@ -5,10 +5,11 @@
 
 #include "scrapers/Scraper.h"
 #include "EmulationStation.h"
+#include "ApiSystem.h"
 
 #if defined(SCREENSCRAPER_DEV_LOGIN)
 
-#define VERSIONED_SOFT_NAME std::string(SCREENSCRAPER_SOFTNAME) + " " + static_cast<std::string>(PROGRAM_VERSION_STRING)
+#define VERSIONED_SOFT_NAME std::string(SCREENSCRAPER_SOFTNAME) + " " + ApiSystem::getInstance()->getVersion()
 
 namespace pugi { class xml_document; }
 

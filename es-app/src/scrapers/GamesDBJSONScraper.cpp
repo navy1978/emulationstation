@@ -89,7 +89,7 @@ const std::map<PlatformId, std::string> gamesdb_new_platformid_map{
 	{ VIDEOPAC_ODYSSEY2, "4927" },
 	{ VECTREX, "4939" },
 	{ TRS80_COLOR_COMPUTER, "4941" },
-	{ TANDY, "4941" },	
+	{ TANDY, "4941" },
 	{ SUPERGRAFX, "34" }, // The code is TurboGrafx 16, but they manage SUPERGRAFX into this one....
 	{ AMIGACD32, "4947" },	
 	{ NEOGEO_CD, "4956" },
@@ -128,6 +128,8 @@ const std::map<PlatformId, std::string> gamesdb_new_platformid_map{
 	{ NAOMI, "23" },
 	{ ATOMISWAVE, "23" },
 	{ DAPHNE, "23" },
+	{ AMERICANLASERGAMES, "23" },
+	{ ACTIONMAX, "4976" },
 	{ TEKNOPARROT, "23" },
 
 	{ SUPER_NINTENDO_MSU1, "6" },
@@ -591,7 +593,7 @@ bool TheGamesDBJSONRequest::process(HttpReq* request, std::vector<ScraperSearchR
 	}
 
 	resources.ensureResources();
-	
+
 	for (int i = 0; i < (int)games.Size(); ++i)
 	{
 		auto& v = games[i];

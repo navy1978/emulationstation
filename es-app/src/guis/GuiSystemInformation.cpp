@@ -13,11 +13,11 @@ GuiSystemInformation::GuiSystemInformation(Window* window) : GuiSettings(window,
 
 	bool warning = ApiSystem::getInstance()->isFreeSpaceLimit();
 
-	addGroup(_("INFORMATION"));
+	//addGroup(_("INFORMATION"));
 
-	addWithLabel(_("VERSION"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getVersion(), font, color));
-	addWithLabel(_("USER DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceUserInfo(), font, warning ? 0xFF0000FF : color));
-	addWithLabel(_("SYSTEM DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceSystemInfo(), font, color));
+	//addWithLabel(_("VERSION"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getVersion(), font, color));
+	//addWithLabel(_("USER DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceUserInfo(), font, warning ? 0xFF0000FF : color));
+	//addWithLabel(_("SYSTEM DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceSystemInfo(), font, color));
 	
 	std::vector<std::string> infos = ApiSystem::getInstance()->getSystemInformations();
 	if (infos.size() > 0)

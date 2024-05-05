@@ -193,8 +193,8 @@ bool SaveStateRepository::isEnabled(FileData* game)
 		return false;
 
 	// Should we really keep this flag ?
-	// if (!game->isFeatureSupported(EmulatorFeatures::autosave))
-	//	 return false;
+	if (!game->isFeatureSupported(EmulatorFeatures::autosave))
+		 return false;
 
 	return SaveStateConfigFile::getSaveStateConfigs(system).size() != 0;
 }
@@ -215,7 +215,7 @@ int SaveStateRepository::getNextFreeSlot(FileData* game, std::shared_ptr<SaveSta
 		auto it = std::find_if(states.cbegin(), states.cend(), [i](const SaveState* x) { return x->slot == i; });
 		if (it != states.cend())
 			return i + 1;
-	}
+	}	
 
 	return -99;
 }
@@ -224,7 +224,7 @@ void SaveStateRepository::renumberSlots(FileData* game, std::shared_ptr<SaveStat
 {
 	if (!isEnabled(game))
 		return;
-
+	
 	auto repo = game->getSourceFileData()->getSystem()->getSaveStateRepository();	
 	repo->refresh();
 
@@ -243,7 +243,7 @@ void SaveStateRepository::renumberSlots(FileData* game, std::shared_ptr<SaveStat
 
 		if (state->slot != slot)
 			state->copyToSlot(slot, true);
-		
+
 		slot++;
 	}	
 }

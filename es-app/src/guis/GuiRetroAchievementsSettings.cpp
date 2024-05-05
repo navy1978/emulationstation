@@ -21,7 +21,7 @@ GuiRetroAchievementsSettings::GuiRetroAchievementsSettings(Window* window) : Gui
 	auto retroachievements_enabled = std::make_shared<SwitchComponent>(mWindow);
 	retroachievements_enabled->setState(retroachievementsEnabled);
 	addWithLabel(_("RETROACHIEVEMENTS"), retroachievements_enabled);
-	
+
 	// retroachievements, username, password
 	addInputTextRow(_("USERNAME"), "global.retroachievements.username", false);
 	addInputTextRow(_("PASSWORD"), "global.retroachievements.password", true);
@@ -55,7 +55,6 @@ GuiRetroAchievementsSettings::GuiRetroAchievementsSettings(Window* window) : Gui
 		addSaveFunc([rsounds_choices] { SystemConf::getInstance()->set("global.retroachievements.sound", rsounds_choices->getSelected()); });
 	}
 
-	// retroachievements_hardcore_mode
 	addSwitch(_("SHOW RETROACHIEVEMENTS ENTRY IN MAIN MENU"), _("View your RetroAchievement stats right from the main menu!"), "RetroachievementsMenuitem", true, nullptr);
 
 	addGroup(_("GAME INDEXES"));

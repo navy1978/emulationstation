@@ -81,6 +81,10 @@ public:
 	static FileData* GetRunningGame() { return mRunningGame; }
 
 	virtual const std::string& getName();
+#ifdef _ENABLEAMBERELEC
+  virtual const std::string& getSortName();
+	virtual const std::string getSortOrName();
+#endif
 
 	inline FileType getType() const { return mType; }
 	
@@ -198,6 +202,9 @@ protected:
 	FileType mType;
 	SystemData* mSystem;
 	std::string* mDisplayName;
+#ifdef _ENABLEAMBERELEC
+	std::string* mSortName;
+#endif
 };
 
 class CollectionFileData : public FileData

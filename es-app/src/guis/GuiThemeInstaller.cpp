@@ -377,7 +377,7 @@ GuiBatoceraThemeEntry::GuiBatoceraThemeEntry(Window* window, BatoceraTheme& entr
 	std::string details = _U("\uf007  ") + entry.author;
 
 	if (entry.size > 0)
-		details = details + _U("  \uf019  ") + std::to_string(entry.size) + "Mb";
+		details = details + _U("  \uf019  ") + std::to_string(entry.size) + "MB";
 	
 	if (!entry.lastUpdate.empty())
 	{

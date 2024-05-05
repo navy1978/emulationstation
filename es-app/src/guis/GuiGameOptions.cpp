@@ -142,6 +142,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 	{
 		mMenu.addGroup(_("GAME"));
 
+ 
 		if (SaveStateRepository::isEnabled(game))
 		{
 			mMenu.addEntry(_("SAVE STATES"), false, [window, game, this]
@@ -152,8 +153,8 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 					options.saveStateInfo = state;
 					ViewController::get()->launch(game, options);
 				}));
-
 				this->close();
+
 			});
 		}
 		else

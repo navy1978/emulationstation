@@ -84,12 +84,12 @@ void GridGameListView::setCursor(FileData* cursor)
 
 std::string GridGameListView::getQuickSystemSelectRightButton()
 {
-	return "r2"; //rightshoulder
+	return "righttrigger";
 }
 
 std::string GridGameListView::getQuickSystemSelectLeftButton()
 {
-	return "l2"; //leftshoulder
+	return "lefttrigger";
 }
 
 bool GridGameListView::input(InputConfig* config, Input input)

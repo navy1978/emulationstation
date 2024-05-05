@@ -327,7 +327,7 @@ void SystemData::populateFolder(FolderData* folder, std::unordered_map<std::stri
 			//ignore folders that do not contain games
 			if(newFolder->getChildren().size() == 0)
 				delete newFolder;
-			else 
+			else
 			{
 				const std::string& key = newFolder->getPath();
 				if (fileMap.find(key) == fileMap.end())
@@ -401,7 +401,7 @@ void SystemData::createGroupedSystems()
 	}
 
 	for (auto item : map)
-	{	
+	{
 		SystemData* system = nullptr;
 		bool existingSystem = false;
 
@@ -537,7 +537,7 @@ void SystemData::createGroupedSystems()
 
 			sSystemVector.push_back(system);
 		}
-		
+
 		root->getMetadata().resetChangedFlag();
 	}
 }
@@ -691,7 +691,7 @@ bool SystemData::isFeatureSupported(std::string emulatorName, std::string coreNa
 				if (coreName == core.name)
 					if ((core.features & feature) == feature)
 						return true;
-			
+
 			return (emulator.features & feature) == feature;
 		}
 	}
@@ -1006,7 +1006,7 @@ std::map<std::string, std::string> SystemData::getKnownSystemNames()
 		std::string fullName = system.child("fullname").text().get();
 		if (fullName.empty())
 			continue;
-		
+
 		ret[name] = fullName;
 	}
 
@@ -1103,7 +1103,7 @@ SystemData* SystemData::loadSystem(pugi::xml_node system, bool fullMode)
 	
 	// Emulators and cores
 	std::vector<EmulatorData> systemEmulators;
-	
+
 	pugi::xml_node emulatorsNode = system.child("emulators");
 	if (emulatorsNode == nullptr)
 		emulatorsNode = system;
@@ -1139,7 +1139,7 @@ SystemData* SystemData::loadSystem(pugi::xml_node system, bool fullMode)
 					core.name = coreNode.text().as_string();
 					core.netplay = coreNode.attribute("netplay") && strcmp(coreNode.attribute("netplay").value(), "true") == 0;
 					core.isDefault = coreNode.attribute("default") && strcmp(coreNode.attribute("default").value(), "true") == 0;
-					
+
 					if (coreNode.attribute("incompatible_extensions"))
 					{
 						for (auto ext : readList(coreNode.attribute("incompatible_extensions").value()))
@@ -1171,7 +1171,7 @@ SystemData* SystemData::loadSystem(pugi::xml_node system, bool fullMode)
 		LOG(LogWarning) << "System \"" << md.name << "\" has no games! Ignoring it.";
 		delete newSys;
 		return nullptr;
-	}	
+	}
 
 	if (!newSys->mIsCollectionSystem && newSys->mIsGameSystem && !md.manufacturer.empty() && !IsManufacturerSupported)
 		IsManufacturerSupported = true;
@@ -1190,7 +1190,7 @@ bool SystemData::hasDirtySystems()
 		SystemData* pData = sSystemVector.at(i);
 		if (pData->mIsCollectionSystem)
 			continue;
-		
+
 		if (hasDirtyFile(pData))
 			return true;
 	}
@@ -1300,7 +1300,7 @@ std::string SystemData::getGamelistPath(bool forWrite) const
 
 	if (forWrite)
 		Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
-	
+
 	return filePath;
 }
 
@@ -1312,7 +1312,7 @@ std::string SystemData::getThemePath() const
 	// 3. default system theme from currently selected theme set [CURRENT_THEME_PATH]/theme.xml
 
 	// first, check game folder
-	
+
 	if (!mEnvData->mStartPath.empty())
 	{
 		std::string rootThemePath = mRootFolder->getPath() + "/theme.xml";
@@ -1383,7 +1383,7 @@ FileData* SystemData::getRandomGame()
 GameCountInfo* SystemData::getGameCountInfo()
 {
 	if (mGameCountInfo != nullptr)
-		return mGameCountInfo;	
+		return mGameCountInfo;
 
 	std::vector<FileData*> games = mRootFolder->getFilesRecursive(GAME, true);
 
@@ -1665,11 +1665,10 @@ bool SystemData::isCheevosSupported()
 		if (!CustomFeatures::FeaturesLoaded)
 		{
 			const std::set<std::string> cheevosSystems = {
-				"megadrive", "n64", "snes", "gb", "gba", "gbc", "nes", "fds", "pcengine", "segacd", "sega32x", "mastersystem",
-				"atarilynx", "lynx", "ngp", "gamegear", "pokemini", "atari2600", "fbneo", "fbn", "virtualboy", "pcfx", "tg16", "famicom", "msx1",
-				"psx", "sg-1000", "sg1000", "coleco", "colecovision", "atari7800", "wonderswan", "pc88", "saturn", "3do", "apple2", "neogeo", "arcade", "mame",
-				"nds", "arcade", "megadrive-japan", "pcenginecd", "supergrafx", "supervision", "snes-msu1", "amstradcpc",
-				"dreamcast", "psp", "jaguar", "intellivision", "vectrex", "megaduck", "arduboy", "wasm4", "ps2" };
+			"arcade","mame","atari2600","atari7800","atarilynx","colecovision","fbn","gamegear","gb",
+			"gba","gbc","genesis","intellivision","mastersystem","megacd","megadrive","msx","msx2","n64","nds","neogeo","nes","ngp",
+			"ngpc","odyssey2","pcengine","pcenginecd","pokemini","psp","psx","sega32x","segacd","sg-1000",
+			"snes","snesmsu1","supervision","tg16","tg16cd","vectrex","virtualboy","wonderswan","wonderswancolor","megaduck","arduboy","wasm4""dreamcast",};
 
 			if (cheevosSystems.find(getName()) != cheevosSystems.cend())
 				mIsCheevosSupported = 1;
@@ -1698,8 +1697,8 @@ bool SystemData::isNetplayActivated()
 	return sSystemVector.any([](auto sys) { return sys->isNetplaySupported(); });
 }
 
-bool SystemData::isGroupChildSystem() 
-{ 
+bool SystemData::isGroupChildSystem()
+{
 	if (mEnvData != nullptr && !mEnvData->mGroup.empty())
 		return !Settings::getInstance()->getBool(mEnvData->mGroup + ".ungroup") && 
 			   !Settings::getInstance()->getBool(getName() + ".ungroup");
@@ -1712,7 +1711,7 @@ std::unordered_set<std::string> SystemData::getAllGroupNames()
 	auto hiddenSystems = Utils::String::split(Settings::HiddenSystems(), ';');
 
 	std::unordered_set<std::string> names;
-	
+
 	for (auto sys : SystemData::sSystemVector)
 	{
 		std::string name;
@@ -1806,7 +1805,7 @@ std::string SystemData::getDefaultEmulator()
 		for (auto core : emul.cores)
 			if (core.isDefault)
 				return emul.name;
-		
+
 	auto emulators = getEmulators();
 	if (emulators.size() > 0)
 		return emulators.begin()->name;
@@ -1822,7 +1821,7 @@ std::string SystemData::getDefaultCore(const std::string emulatorName)
 
 	if (emul.empty())
 		return "";
-	
+
 	for (auto it : mEmulators)
 	{
 		if (it.name == emul)
@@ -1834,7 +1833,7 @@ std::string SystemData::getDefaultCore(const std::string emulatorName)
 			if (it.cores.size() > 0)
 				return it.cores.begin()->name;
 		}
-	}	
+	}
 
 	return "";
 }

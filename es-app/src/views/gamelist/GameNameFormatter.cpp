@@ -10,6 +10,10 @@
 #include "SaveStateRepository.h"
 #include "CollectionSystemManager.h"
 
+#ifdef _ENABLEAMBERELEC
+	#include "SystemConf.h"
+#endif
+
 #define FOLDERICON	 _U("\uF07C ")
 #define FAVORITEICON _U("\uF006 ")
 
@@ -76,7 +80,11 @@ GameNameFormatter::GameNameFormatter(SystemData* system)
 
 	mShowYear =
 		mSortId == FileSorts::RELEASEDATE_ASCENDING ||
+#ifdef _ENABLEAMBERELEC			
+		mSortId == FileSorts::RELEASEDATE_DESCENDING ||
+#else
 		mSortId == FileSorts::RELEASEDATE_ASCENDING ||
+#endif
 		mSortId == FileSorts::SYSTEM_RELEASEDATE_ASCENDING ||
 		mSortId == FileSorts::SYSTEM_RELEASEDATE_DESCENDING ||
 		mSortId == FileSorts::RELEASEDATE_SYSTEM_ASCENDING ||
@@ -115,6 +123,13 @@ std::string valueOrDefault(const std::string value, const std::string defaultVal
 std::string GameNameFormatter::getDisplayName(FileData* fd, bool showFolderIcon)
 {
 	std::string name = fd->getName();
+#ifdef _ENABLEAMBERELEC
+	std::string hideSortNames = SystemConf::getInstance()->get(fd->getSystem()->getName() + ".hideSortNames");
+	if (hideSortNames.empty()) {
+		if ((mSortId == FileSorts::SORTNAME_ASCENDING || mSortId == FileSorts::SORTNAME_DESCENDING) && !fd->getSortName().empty())
+			name = fd->getSortName();
+	}
+#endif
 
 	bool showSystemNameByFile = (fd->getType() == GAME || fd->getParent() == nullptr || fd->getParent()->getName() != "collections");
 	if (showSystemNameByFile)
