@@ -1309,6 +1309,23 @@ void GuiMenu::openDeveloperSettings()
 	s->addWithLabel(_("OPTIMIZE VIDEO VRAM USAGE"), optimizeVideo);
 	s->addSaveFunc([optimizeVideo] { Settings::getInstance()->setBool("OptimizeVideo", optimizeVideo->getState()); });
 
+	s->addGroup(_("UPDATES"));
+
+	// Allow customizing the github org and repo used to update from
+	// This allows using a different fork/repository to download releases for testing
+	s->addInputTextRow(_("GITHUB ORG"), "updates.github.org", false);
+	s->addInputTextRow(_("GITHUB REPO"), "updates.github.repo", false);
+
+	//Force updates will tell the check script and the update script to always
+	//use an update regardless of the current version on the device.
+	auto forceUpdates = std::make_shared<SwitchComponent>(mWindow);
+	forceUpdates->setState(SystemConf::getInstance()->getBool("updates.force"));
+	s->addWithLabel(_("FORCE UPDATES"), forceUpdates);
+	s->addSaveFunc([forceUpdates]
+	{
+		SystemConf::getInstance()->setBool("updates.force", forceUpdates->getState());
+	});
+
 	s->onFinalize([s, window]
 	{
 		if (s->getVariable("reboot"))
