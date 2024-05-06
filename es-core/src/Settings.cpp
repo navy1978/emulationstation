@@ -149,7 +149,7 @@ void Settings::setDefaults()
 	mIntMap["MonitorID"] = -1;
 
 	mBoolMap["UseOSK"] = true; // on screen keyboard
-    mBoolMap["DrawClock"] = Settings::_DrawClock;
+	mBoolMap["DrawClock"] = Settings::_DrawClock;
 	mBoolMap["ClockMode12"] = Settings::_ClockMode12;
 	mBoolMap["ShowControllerNotifications"] = true;	
 	mBoolMap["ShowControllerActivity"] = Settings::_ShowControllerActivity;

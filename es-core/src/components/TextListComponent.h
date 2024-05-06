@@ -472,7 +472,7 @@ bool TextListComponent<T>::input(InputConfig* config, Input input)
 				return true;
 			}
 #ifdef _ENABLEAMBERELEC
-			if(config->isMappedTo("righttrigger", input))
+			if(config->isMappedTo("rightshoulder", input))
 #else			
 			if (config->isMappedTo("pagedown", input))
 #endif
@@ -482,7 +482,7 @@ bool TextListComponent<T>::input(InputConfig* config, Input input)
 			}
 
 #ifdef _ENABLEAMBERELEC
-			if(config->isMappedTo("lefttrigger", input))
+			if(config->isMappedTo("leftshoulder", input))
 #else	
 			if (config->isMappedTo("pageup", input))
 #endif
@@ -494,7 +494,7 @@ bool TextListComponent<T>::input(InputConfig* config, Input input)
 		else {
 #ifdef _ENABLEAMBERELEC
 			if(config->isMappedLike("down", input) || config->isMappedLike("up", input) || 
-				config->isMappedTo("righttrigger", input) || config->isMappedTo("lefttrigger", input))
+				config->isMappedTo("rightshoulder", input) || config->isMappedTo("leftshoulder", input))
 #else
 			if (config->isMappedLike("down", input) || config->isMappedLike("up", input) ||
 				config->isMappedLike("pagedown", input) || config->isMappedLike("pageup", input))

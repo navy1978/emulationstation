@@ -96,7 +96,7 @@ bool CarouselComponent::input(InputConfig* config, Input input)
 		{
 		case CarouselType::VERTICAL:
 		case CarouselType::VERTICAL_WHEEL:
-			if (config->isMappedLike("up", input) || config->isMappedLike("l2", input))
+			if (config->isMappedLike("up", input) || config->isMappedLike("lefttrigger", input))
 			{
 				listInput(-1);
 				return true;
