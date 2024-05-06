@@ -18,8 +18,8 @@ IMPLEMENT_STATIC_BOOL_SETTING(DebugText, false)
 IMPLEMENT_STATIC_BOOL_SETTING(DebugImage, false)
 IMPLEMENT_STATIC_BOOL_SETTING(DebugGrid, false)
 IMPLEMENT_STATIC_BOOL_SETTING(DebugMouse, false)
-IMPLEMENT_STATIC_BOOL_SETTING(ShowControllerActivity, true)
-IMPLEMENT_STATIC_BOOL_SETTING(ShowControllerBattery, true)
+IMPLEMENT_STATIC_BOOL_SETTING(ShowControllerActivity, false)
+IMPLEMENT_STATIC_BOOL_SETTING(ShowControllerBattery, false)
 IMPLEMENT_STATIC_BOOL_SETTING(DrawClock, true)
 IMPLEMENT_STATIC_BOOL_SETTING(ClockMode12, false)
 IMPLEMENT_STATIC_BOOL_SETTING(DrawFramerate, false)
@@ -149,10 +149,11 @@ void Settings::setDefaults()
 	mIntMap["MonitorID"] = -1;
 
 	mBoolMap["UseOSK"] = true; // on screen keyboard
-	mBoolMap["DrawClock"] = false;
+    mBoolMap["DrawClock"] = Settings::_DrawClock;
 	mBoolMap["ClockMode12"] = Settings::_ClockMode12;
-	mBoolMap["ShowControllerActivity"] = false;
-	mBoolMap["ShowControllerBattery"] = false;
+	mBoolMap["ShowControllerNotifications"] = true;	
+	mBoolMap["ShowControllerActivity"] = Settings::_ShowControllerActivity;
+	mBoolMap["ShowControllerBattery"] = Settings::_ShowControllerBattery;
 	mIntMap["SystemVolume"] = 95;
 	mBoolMap["Overscan"] = false;
 	mStringMap["Language"] = "en_US";
@@ -225,7 +226,7 @@ void Settings::setDefaults()
 	mStringMap["ScrapperImageSrc"] = "ss";
 	mStringMap["ScrapperThumbSrc"] = "";
 	mStringMap["ScrapperLogoSrc"] = "";
-	mBoolMap["ScrapeVideos"] = true;
+	mBoolMap["ScrapeVideos"] = false;
 	mBoolMap["ScrapeShortTitle"] = false;
 
 	mBoolMap["ScreenSaverMarquee"] = true;
