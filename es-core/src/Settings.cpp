@@ -141,8 +141,6 @@ void Settings::setDefaults()
 	mBoolMap["TTS"] = false;
 
 #if defined(RG552)
-	mStringMap["MenuFontScale"] = "1.1";
-	mStringMap["FontScale"] = "1.1";
 	mStringMap["FullScreenMenu"] = "true";
 #endif
 
