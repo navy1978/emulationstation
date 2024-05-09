@@ -251,6 +251,7 @@ void Settings::setDefaults()
 	mStringMap["LogLevel"] = "minimal";
 	mBoolMap["ShowManualIcon"] = false;
 	mBoolMap["ShowSaveStates"] = true;
+	mStringMap["ShowFlags"] = "1";
 #endif
 	mBoolMap["ShowCheevosIcon"] = true;
 
