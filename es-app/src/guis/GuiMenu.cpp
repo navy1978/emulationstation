@@ -4448,8 +4448,6 @@ void GuiMenu::openNetworkSettings(bool selectWifiEnable)
                                 SystemConf::getInstance()->saveSystemConf();
                 });
 
-//Right now limit webui to RG552
-#ifdef RG552
        auto webui_enabled = std::make_shared<SwitchComponent>(mWindow);
 		bool webuibaseEnabled = SystemConf::getInstance()->get("ee_webui.enabled") == "1";
 		webui_enabled->setState(webuibaseEnabled);
@@ -4470,7 +4468,6 @@ void GuiMenu::openNetworkSettings(bool selectWifiEnable)
 			SystemConf::getInstance()->set("ee_webui.enabled", webuienabled ? "1" : "0");
 			SystemConf::getInstance()->saveSystemConf();
 		});
-#endif
 
 	// Wifi enable
 	auto enable_wifi = std::make_shared<SwitchComponent>(mWindow);
