@@ -576,14 +576,6 @@ void GuiMenu::openDmdSettings()
 	format->addRange({ { _("AUTO"), "" }, { "SD", "sd" }, { "HD", "hd" } }, current_format);
 	s->addWithDescription(_("FORMAT"), _("dmd matrix size"), format);
 
-	s->addGroup("PIXELCADE");
-
-	// pixelcade.matrix
-	auto pixelcade_matrix = std::make_shared< OptionListComponent<std::string> >(window, _("MATRIX"), false);
-	std::string current_pixelcade_matrix = SystemConf::getInstance()->get("dmd.pixelcade.matrix");
-	pixelcade_matrix->addRange({ { _("AUTO"), "" }, { "RGB", "rgb" }, { "RBG", "rbg" } }, current_pixelcade_matrix);
-	s->addWithDescription(_("MATRIX"), _("rgb dmd order"), pixelcade_matrix);
-
 	s->addGroup("ZEDMD");
 
 	// zedmd.matrix
@@ -598,17 +590,12 @@ void GuiMenu::openDmdSettings()
 	zedmd_brightness->addRange({ { _("AUTO"), "" }, { "0", "0" }, { "1", "1" }, { "2", "2" }, { "3", "3" }, { "4", "4" }, { "5", "5" }, { "6", "6" }, { "7", "7" }, { "8", "8" }, { "9", "9" }, { "10", "10" }, { "11", "11" }, { "12", "12" }, { "13", "13" }, { "14", "14" }, { "15", "15" } }, current_zedmd_brightness);
 	s->addWithLabel(_("BRIGHTNESS"), zedmd_brightness);
 
-	s->addSaveFunc([window, server, format, pixelcade_matrix, zedmd_matrix, zedmd_brightness, current_server, current_format, current_pixelcade_matrix, current_zedmd_matrix, current_zedmd_brightness] {
+	s->addSaveFunc([window, server, format, zedmd_matrix, zedmd_brightness, current_server, current_format, current_zedmd_matrix, current_zedmd_brightness] {
 	  bool needRestart = false;
 	  bool needSave    = false;
 
 	  if(current_format != format->getSelected()) {
 	    SystemConf::getInstance()->set("dmd.format", format->getSelected());
-	    needSave = true;
-	  }
-	  if(current_pixelcade_matrix != pixelcade_matrix->getSelected()) {
-	    SystemConf::getInstance()->set("dmd.pixelcade.matrix", pixelcade_matrix->getSelected());
-	    needRestart = true;
 	    needSave = true;
 	  }
 	  if(current_zedmd_matrix != zedmd_matrix->getSelected()) {
@@ -665,11 +652,38 @@ void GuiMenu::openMultiScreensSettings()
 
 #ifdef BATOCERA
 	s->addGroup(_("BACKGLASS / INFORMATION SCREEN"));
-
+	
 	// video device2
 	std::vector<std::string> availableVideo2 = ApiSystem::getInstance()->getAvailableVideoOutputDevices();
 	if (availableVideo2.size())
 	{
+	        if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::BACKGLASS)) {
+			// theme
+			auto themes = ApiSystem::getInstance()->backglassThemes();
+			auto selectedTheme = SystemConf::getInstance()->get("backglass.theme");
+			auto theme = std::make_shared<OptionListComponent<std::string> >(mWindow, _("THEME"), false);
+			
+			std::vector<std::string> themeList;
+			for (auto it = themes.begin(); it != themes.end(); it++)
+			  themeList.push_back(*it);
+			std::sort(themeList.begin(), themeList.end(), [](const std::string& a, const std::string& b) -> bool { return Utils::String::toLower(a).compare(Utils::String::toLower(b)) < 0; });
+
+			theme->add(_("AUTO"), "auto", selectedTheme == "" || selectedTheme == "auto");
+			for (auto themeName : themeList)
+			  theme->add(themeName, themeName, themeName == selectedTheme);
+			
+			s->addWithLabel(_("THEME"), theme);
+			s->addSaveFunc([theme]
+			{
+			  std::string oldTheme = SystemConf::getInstance()->get("backglass.theme");
+			  if (oldTheme != theme->getSelected()) {
+			    SystemConf::getInstance()->set("backglass.theme", theme->getSelected());
+			    SystemConf::getInstance()->saveSystemConf();
+			    ApiSystem::getInstance()->restartBackglass();
+			  }
+			});
+		}
+
 		auto optionsVideo2 = std::make_shared<OptionListComponent<std::string> >(mWindow, _("VIDEO OUTPUT"), false);
 		std::string currentDevice2 = SystemConf::getInstance()->get("global.videooutput2");
 		std::string currentDevice = SystemConf::getInstance()->get("global.videooutput");
@@ -684,8 +698,10 @@ void GuiMenu::openMultiScreensSettings()
 				vfound = true;
 		}
 
-		if (!vfound)
+		if (!vfound && currentDevice2 != "none")
 			optionsVideo2->add(currentDevice2, currentDevice2, true);
+		// add the none value
+		optionsVideo2->add(_("NONE"), "none", currentDevice2 == "none");
 
 		s->addWithLabel(_("VIDEO OUTPUT"), optionsVideo2);
 		s->addSaveFunc([this, optionsVideo2, currentDevice2, s]
@@ -697,44 +713,44 @@ void GuiMenu::openMultiScreensSettings()
 				s->setVariable("exitreboot", true);
 			}
 		});
+
+		// video resolution2
+		if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RESOLUTION)) {
+		  auto videoModeOptionList2 = createVideoResolutionModeOptionList(mWindow, "es", "resolution2", optionsVideo2->getSelected() == "auto" ? "none" : optionsVideo2->getSelected());
+		  s->addWithDescription(_("VIDEO MODE"), _("Sets the display's resolution."), videoModeOptionList2);
+		  s->addSaveFunc([this, videoModeOptionList2, s] {
+		    if(videoModeOptionList2->changed()) {
+		      SystemConf::getInstance()->set("es.resolution2", videoModeOptionList2->getSelected());
+		      SystemConf::getInstance()->saveSystemConf();
+		      s->setVariable("exitreboot", true);
+		    }
+		  });
+		}
+
+		// video rotation2
+		auto optionsRotation2 = std::make_shared<OptionListComponent<std::string> >(mWindow, _("ROTATION"), false);
+
+		std::string selectedRotation2 = SystemConf::getInstance()->get("display.rotate2");
+		if (selectedRotation2.empty())
+		  selectedRotation2 = "auto";
+
+		optionsRotation2->add(_("AUTO"),          "auto", selectedRotation2 == "auto");
+		optionsRotation2->add(_("0 DEGREES"),        "0", selectedRotation2 == "0");
+		optionsRotation2->add(_("90 DEGREES"),       "1", selectedRotation2 == "1");
+		optionsRotation2->add(_("180 DEGREES"),      "2", selectedRotation2 == "2");
+		optionsRotation2->add(_("270 DEGREES"),      "3", selectedRotation2 == "3");
+
+		s->addWithLabel(_("SCREEN ROTATION"), optionsRotation2);
+
+		s->addSaveFunc([this, optionsRotation2, selectedRotation2, s]
+		{
+		  if (optionsRotation2->changed()) {
+		    SystemConf::getInstance()->set("display.rotate2", optionsRotation2->getSelected());
+		    SystemConf::getInstance()->saveSystemConf();
+		    s->setVariable("exitreboot", true);
+		  }
+		});
 	}
-
-	// video resolution2
-	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RESOLUTION)) {
-	  auto videoModeOptionList2 = createVideoResolutionModeOptionList(mWindow, "es", "resolution2");
-	  s->addWithDescription(_("VIDEO MODE"), _("Sets the display's resolution."), videoModeOptionList2);
-	  s->addSaveFunc([this, videoModeOptionList2, s] {
-	    if(videoModeOptionList2->changed()) {
-	      SystemConf::getInstance()->set("es.resolution2", videoModeOptionList2->getSelected());
-	      SystemConf::getInstance()->saveSystemConf();
-	      s->setVariable("exitreboot", true);
-	    }
-	  });
-	}
-
-	// video rotation2
-	auto optionsRotation2 = std::make_shared<OptionListComponent<std::string> >(mWindow, _("ROTATION"), false);
-
-	std::string selectedRotation2 = SystemConf::getInstance()->get("display.rotate2");
-	if (selectedRotation2.empty())
-		selectedRotation2 = "auto";
-
-	optionsRotation2->add(_("AUTO"),          "auto", selectedRotation2 == "auto");
-	optionsRotation2->add(_("0 DEGREES"),        "0", selectedRotation2 == "0");
-	optionsRotation2->add(_("90 DEGREES"),       "1", selectedRotation2 == "1");
-	optionsRotation2->add(_("180 DEGREES"),      "2", selectedRotation2 == "2");
-	optionsRotation2->add(_("270 DEGREES"),      "3", selectedRotation2 == "3");
-
-	s->addWithLabel(_("SCREEN ROTATION"), optionsRotation2);
-
-	s->addSaveFunc([this, optionsRotation2, selectedRotation2, s]
-	{
-	  if (optionsRotation2->changed()) {
-	    SystemConf::getInstance()->set("display.rotate2", optionsRotation2->getSelected());
-	    SystemConf::getInstance()->saveSystemConf();
-	    s->setVariable("exitreboot", true);
-	  }
-	});
 
 	s->addGroup(_("DMD SCREEN"));
 
@@ -769,46 +785,45 @@ void GuiMenu::openMultiScreensSettings()
 				s->setVariable("exitreboot", true);
 			}
 		});
+
+		// video resolution3
+		if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RESOLUTION)) {
+		  auto videoModeOptionList3 = createVideoResolutionModeOptionList(mWindow, "es", "resolution3", optionsVideo3->getSelected() == "auto" ? "none" : optionsVideo3->getSelected());
+		  s->addWithDescription(_("VIDEO MODE"), _("Sets the display's resolution."), videoModeOptionList3);
+		  s->addSaveFunc([this, videoModeOptionList3, s] {
+		    if(videoModeOptionList3->changed()) {
+		      SystemConf::getInstance()->set("es.resolution3", videoModeOptionList3->getSelected());
+		      SystemConf::getInstance()->saveSystemConf();
+		      s->setVariable("exitreboot", true);
+		    }
+		  });
+		}
+
+		// video rotation3
+		auto optionsRotation3 = std::make_shared<OptionListComponent<std::string> >(mWindow, _("ROTATION"), false);
+
+		std::string selectedRotation3 = SystemConf::getInstance()->get("display.rotate3");
+		if (selectedRotation3.empty())
+		  selectedRotation3 = "auto";
+
+		optionsRotation3->add(_("AUTO"),          "auto", selectedRotation3 == "auto");
+		optionsRotation3->add(_("0 DEGREES"),        "0", selectedRotation3 == "0");
+		optionsRotation3->add(_("90 DEGREES"),       "1", selectedRotation3 == "1");
+		optionsRotation3->add(_("180 DEGREES"),      "2", selectedRotation3 == "2");
+		optionsRotation3->add(_("270 DEGREES"),      "3", selectedRotation3 == "3");
+
+		s->addWithLabel(_("SCREEN ROTATION"), optionsRotation3);
+
+		s->addSaveFunc([this, optionsRotation3, selectedRotation3, s]
+		{
+		  if (optionsRotation3->changed()) 
+		    {
+		      SystemConf::getInstance()->set("display.rotate3", optionsRotation3->getSelected());
+		      SystemConf::getInstance()->saveSystemConf();
+		      s->setVariable("exitreboot", true);
+		    }
+		});
 	}
-
-	// video resolution3
-	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RESOLUTION)) {
-	  auto videoModeOptionList3 = createVideoResolutionModeOptionList(mWindow, "es", "resolution3");
-	  s->addWithDescription(_("VIDEO MODE"), _("Sets the display's resolution."), videoModeOptionList3);
-	  s->addSaveFunc([this, videoModeOptionList3, s] {
-	    if(videoModeOptionList3->changed()) {
-	      SystemConf::getInstance()->set("es.resolution3", videoModeOptionList3->getSelected());
-	      SystemConf::getInstance()->saveSystemConf();
-	      s->setVariable("exitreboot", true);
-	    }
-	  });
-	}
-
-	// video rotation3
-	auto optionsRotation3 = std::make_shared<OptionListComponent<std::string> >(mWindow, _("ROTATION"), false);
-
-	std::string selectedRotation3 = SystemConf::getInstance()->get("display.rotate3");
-	if (selectedRotation3.empty())
-		selectedRotation3 = "auto";
-
-	optionsRotation3->add(_("AUTO"),          "auto", selectedRotation3 == "auto");
-	optionsRotation3->add(_("0 DEGREES"),        "0", selectedRotation3 == "0");
-	optionsRotation3->add(_("90 DEGREES"),       "1", selectedRotation3 == "1");
-	optionsRotation3->add(_("180 DEGREES"),      "2", selectedRotation3 == "2");
-	optionsRotation3->add(_("270 DEGREES"),      "3", selectedRotation3 == "3");
-
-	s->addWithLabel(_("SCREEN ROTATION"), optionsRotation3);
-
-	s->addSaveFunc([this, optionsRotation3, selectedRotation3, s]
-	{
-	  if (optionsRotation3->changed())
-{
-	    SystemConf::getInstance()->set("display.rotate3", optionsRotation3->getSelected());
-	    SystemConf::getInstance()->saveSystemConf();
-	    s->setVariable("exitreboot", true);
-	  }
-	});
-
 #endif
 
 	s->onFinalize([s, window]
@@ -2047,6 +2062,68 @@ void GuiMenu::openSystemSettings()
 #endif
 
 #ifdef BATOCERA
+#ifdef X86_64
+	int red, green, blue;
+	if (ApiSystem::getInstance()->getLED(red, green, blue)) {
+		s->addGroup(_("LED HARDWARE"));
+
+		auto redLEDComponent = std::make_shared<SliderComponent>(mWindow, 0.f, 255.f, 1.f);
+		redLEDComponent->setValue(red);
+		redLEDComponent->setOnValueChanged([](const float &newVal) {
+			int red, green, blue;
+			ApiSystem::getInstance()->getLEDColours(red, green, blue);
+			int redInt = static_cast<int>(newVal);
+			ApiSystem::getInstance()->setLEDColours(redInt, green, blue);
+			std::string colourString = std::to_string(redInt) + " " + std::to_string(green) + " " + std::to_string(blue);
+			SystemConf::getInstance()->set("led.colour", colourString);
+		});
+
+		s->addWithLabel(_("RED"), redLEDComponent);
+
+		auto greenLEDComponent = std::make_shared<SliderComponent>(mWindow, 0.f, 255.f, 1.f);
+		greenLEDComponent->setValue(green);
+		greenLEDComponent->setOnValueChanged([](const float &newVal) {
+			int red, green, blue;
+			ApiSystem::getInstance()->getLEDColours(red, green, blue);
+			int greenInt = static_cast<int>(newVal);
+			ApiSystem::getInstance()->setLEDColours(red, greenInt, blue);
+			std::string colourString = std::to_string(red) + " " + std::to_string(greenInt) + " " + std::to_string(blue);
+			SystemConf::getInstance()->set("led.colour", colourString);
+		});
+
+		s->addWithLabel(_("GREEN"), greenLEDComponent);
+
+		auto blueLEDComponent = std::make_shared<SliderComponent>(mWindow, 0.f, 255.f, 1.f);
+		blueLEDComponent->setValue(blue);
+		blueLEDComponent->setOnValueChanged([](const float &newVal) {
+			int red, green, blue;
+			ApiSystem::getInstance()->getLEDColours(red, green, blue);
+			int blueInt = static_cast<int>(newVal);
+			ApiSystem::getInstance()->setLEDColours(red, green, blueInt);
+			std::string colourString = std::to_string(red) + " " + std::to_string(green) + " " + std::to_string(blueInt);
+			SystemConf::getInstance()->set("led.colour", colourString);
+		});
+
+		s->addWithLabel(_("BLUE"), blueLEDComponent);
+	}
+	
+	// LED brightness
+	int ledBrightness;
+	if (ApiSystem::getInstance()->getLEDBrightness(ledBrightness)) {
+		auto ledBrightnessComponent = std::make_shared<SliderComponent>(mWindow, 0.f, 100.f, 1.f, "%");
+		ledBrightnessComponent->setValue(ledBrightness);
+		ledBrightnessComponent->setOnValueChanged([](const float &newVal)
+		{
+			ApiSystem::getInstance()->setLEDBrightness((int)Math::round(newVal));
+			SystemConf::getInstance()->set("led.brightness", std::to_string((int)Math::round(newVal)));
+		});
+
+		s->addWithLabel(_("LED BRIGHTNESS"), ledBrightnessComponent);
+	}
+#endif
+#endif
+
+#ifdef BATOCERA
 	s->addGroup(_("STORAGE"));
 
 	// Storage device
@@ -2558,7 +2635,10 @@ void GuiMenu::addFeatureItem(Window* window, GuiSettings* settings, const Custom
 	if (feat.preset == "switchon")
 	{
 		auto switchComponent = std::make_shared<SwitchComponent>(window);
-		switchComponent->setState(storedValue != "0");
+		if (storedValue == "0")
+		    switchComponent->setState(false);
+		else
+		    switchComponent->setState(true);
 
 		if (!feat.description.empty())
 			settings->addWithDescription(pgettext("game_options", feat.name.c_str()), pgettext("game_options", feat.description.c_str()), switchComponent);
@@ -2572,14 +2652,17 @@ void GuiMenu::addFeatureItem(Window* window, GuiSettings* settings, const Custom
 	if (feat.preset == "switchoff")
 	{
 		auto switchComponent = std::make_shared<SwitchComponent>(window);
-		switchComponent->setState(storedValue != "1");
+		if (storedValue == "1")
+		    switchComponent->setState(true);
+		else
+		    switchComponent->setState(false);
 
 		if (!feat.description.empty())
 			settings->addWithDescription(pgettext("game_options", feat.name.c_str()), pgettext("game_options", feat.description.c_str()), switchComponent);
 		else
 			settings->addWithLabel(pgettext("game_options", feat.name.c_str()), switchComponent);
 
-		settings->addSaveFunc([storageName, switchComponent] { SystemConf::getInstance()->set(storageName, switchComponent->getState() ? "" : "1"); });
+		settings->addSaveFunc([storageName, switchComponent] { SystemConf::getInstance()->set(storageName, switchComponent->getState() ? "1" : ""); });
 		return;
 	}
 
@@ -5384,15 +5467,15 @@ std::shared_ptr<OptionListComponent<std::string>> GuiMenu::createRatioOptionList
 	return ratio_choice;
 }
 
-std::shared_ptr<OptionListComponent<std::string>> GuiMenu::createVideoResolutionModeOptionList(Window *window, std::string configname, std::string configoptname)
+std::shared_ptr<OptionListComponent<std::string>> GuiMenu::createVideoResolutionModeOptionList(Window *window, std::string configname, std::string configoptname, const std::string output) 
 {
 	auto videoResolutionMode_choice = std::make_shared<OptionListComponent<std::string> >(window, _("VIDEO MODE"), false);
 
 	std::string currentVideoMode = SystemConf::getInstance()->get(configname + "." + configoptname);
 	if (currentVideoMode.empty())
 		currentVideoMode = std::string("auto");
-
-	std::vector<std::string> videoResolutionModeMap = ApiSystem::getInstance()->getVideoModes();
+	
+	std::vector<std::string> videoResolutionModeMap = ApiSystem::getInstance()->getVideoModes(output);
 	videoResolutionMode_choice->add(_("AUTO"), "auto", currentVideoMode == "auto");
 	for (auto videoMode = videoResolutionModeMap.begin(); videoMode != videoResolutionModeMap.end(); videoMode++)
 	{

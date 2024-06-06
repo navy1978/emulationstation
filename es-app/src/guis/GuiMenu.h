@@ -12,34 +12,34 @@
 
 struct DecorationSetInfo
 {
-	DecorationSetInfo() {}
-	DecorationSetInfo(const std::string _name, const std::string _path, const std::string _imageUrl)
-	{
-		name = _name; path = _path; imageUrl = _imageUrl;
-	}
+        DecorationSetInfo() {}
+        DecorationSetInfo(const std::string _name, const std::string _path, const std::string _imageUrl)
+        {
+                name = _name; path = _path; imageUrl = _imageUrl;
+        }
 
-	std::string name;
-	std::string path;
-	std::string imageUrl;
+        std::string name;
+        std::string path;
+        std::string imageUrl;
 };
 
 class GuiMenu : public GuiComponent
 {
 public:
-	GuiMenu(Window* window, bool animate = true);
+        GuiMenu(Window* window, bool animate = true);
 
-	bool input(InputConfig* config, Input input) override;
-	void onSizeChanged() override;
-	std::vector<HelpPrompt> getHelpPrompts() override;
-	static void openQuitMenu_static(Window *window, bool quickAccessMenu = false, bool animate = true);
+        bool input(InputConfig* config, Input input) override;
+        void onSizeChanged() override;
+        std::vector<HelpPrompt> getHelpPrompts() override;      
+        static void openQuitMenu_static(Window *window, bool quickAccessMenu = false, bool animate = true);
 
-	static void popSystemConfigurationGui(Window* mWindow, SystemData *systemData);
-	static void popGameConfigurationGui(Window* mWindow, FileData* fileData);
+        static void popSystemConfigurationGui(Window* mWindow, SystemData *systemData);
+        static void popGameConfigurationGui(Window* mWindow, FileData* fileData);
 
-	static void openThemeConfiguration(Window* mWindow, GuiComponent* s, std::shared_ptr<OptionListComponent<std::string>> theme_set, const std::string systemTheme = "");
+        static void openThemeConfiguration(Window* mWindow, GuiComponent* s, std::shared_ptr<OptionListComponent<std::string>> theme_set, const std::string systemTheme = "");
 
-	static void updateGameLists(Window* window, bool confirm = true);
-	static void editKeyboardMappings(Window *window, IKeyboardMapContainer* mapping, bool editable);
+        static void updateGameLists(Window* window, bool confirm = true);
+        static void editKeyboardMappings(Window *window, IKeyboardMapContainer* mapping, bool editable);
 
 private:
 	void addEntry(const std::string& name, bool add_arrow, const std::function<void()>& func, const std::string iconName = "");
@@ -73,17 +73,17 @@ private:
 	void openFormatDriveSettings();
 	void exitKidMode();
 
-	// windows
-	void openEmulatorSettings();
-	void openSystemEmulatorSettings(SystemData* system);
+        // windows
+        void openEmulatorSettings();
+        void openSystemEmulatorSettings(SystemData* system);
 
-	static void openWifiSettings(Window* win, std::string title, std::string data, const std::function<void(std::string)>& onsave);
+        static void openWifiSettings(Window* win, std::string title, std::string data, const std::function<void(std::string)>& onsave);
 
-	MenuComponent mMenu;
-	TextComponent mVersion;
+        MenuComponent mMenu;
+        TextComponent mVersion;
 
-	static std::shared_ptr<OptionListComponent<std::string>> createRatioOptionList(Window *window, std::string configname);
-	static std::shared_ptr<OptionListComponent<std::string>> createVideoResolutionModeOptionList(Window *window, std::string configname, std::string configoptname = "videomode");
+        static std::shared_ptr<OptionListComponent<std::string>> createRatioOptionList(Window *window, std::string configname);
+        static std::shared_ptr<OptionListComponent<std::string>> createVideoResolutionModeOptionList(Window *window, std::string configname, std::string configoptname = "videomode", const std::string output = "");
 	static void popSpecificConfigurationGui(Window* mWindow, std::string title, std::string configName, SystemData *systemData, FileData* fileData, bool selectCoreLine = false);
 
 	static void openLatencyReductionConfiguration(Window* mWindow, std::string configName);
