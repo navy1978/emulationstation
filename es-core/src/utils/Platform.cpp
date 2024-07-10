@@ -403,7 +403,6 @@ namespace Utils
 			static std::string batteryCapacityPath;
 			static std::string batteryCurrChargePath;
 			static std::string batteryMaxChargePath;
-			int fd;
 
 			// Find battery path - only at the first call
 			if (batteryStatusPath.empty())
@@ -475,18 +474,7 @@ namespace Utils
 					}
 				}
 				else
-				    // New method as readAllText wasn't working < 10%
-				    fd = open(batteryCapacityPath.c_str(), O_RDONLY);
-					char buffer[4] = {0};
-					ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
-					close(fd);
-					if (bytes_read > 0) {
-						ret.level = Utils::String::toInteger(buffer);
-					}
-					else
-					{
-						LOG(LogError) << "Error reading: " << batteryCapacityPath;
-					}
+					ret.level = Utils::String::toInteger(Utils::FileSystem::readAllText(batteryCapacityPath).c_str());
 			}
 
 			return ret;
