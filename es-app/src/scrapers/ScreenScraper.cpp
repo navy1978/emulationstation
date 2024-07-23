@@ -169,7 +169,6 @@ const std::map<PlatformId, unsigned short> screenscraper_platformid_map{
 	{ PHILIPS_CDI, 133 },
 	{ SUPER_NINTENDO_MSU1, 210 },
 	{ Z_MACHINE, 215 },
-	{ LOWRES_NX, 244 },
 	{ VIRCON32, 272 },
 	{ FMTOWNS, 253 },
 	{ FUJITSU_FM7, 97 },
