@@ -175,6 +175,7 @@ namespace PlatformIds
 		EPOCH_GAMEPOCKET,
 		WASM4,
 		TANDY_VIS,
+		LOWRESNX,
 
 		TEKNOPARROT,
 
