@@ -217,6 +217,20 @@ const std::string FileData::getThumbnailPath(bool fallbackWithImage)
 				thumbnail = findLocalArt();
 		}
 
+		// no image, try to use game file as png
+		if (thumbnail.empty())
+		{
+			auto path = getSystemEnvData()->mStartPath + "/" + getDisplayName();
+			if (getSystemName() == "pico8" && Utils::FileSystem::exists(path + ".p8"))
+				thumbnail = path + ".p8";;
+		}
+		if (thumbnail.empty())
+		{
+			auto path = getSystemEnvData()->mStartPath + "/" + getDisplayName();
+			if (getSystemName() == "pico8" && Utils::FileSystem::exists(path + ".png"))
+				thumbnail = path + ".png";
+		}
+
 		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
 		{
 			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
