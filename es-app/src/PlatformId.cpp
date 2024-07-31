@@ -144,7 +144,6 @@ namespace PlatformIds
 		{ "ti99",					TI99 },
 		{ "ti99_4a",				TI99 },
 		{ "pico8",					PICO8 },
-		{ "pico-8",			PICO8 },
 		{ "sgb",					SUPER_GAME_BOY },
 
 		{ "watara",			WATARA_SUPERVISION },

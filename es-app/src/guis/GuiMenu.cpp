@@ -3390,8 +3390,8 @@ void GuiMenu::openGamesSettings()
 				if (system->hasPlatformId(PlatformIds::PLATFORM_IGNORE))
 					continue;
 
-				if (!system->hasFeatures() && !system->hasEmulatorSelection())
-					continue;
+				//if (!system->hasFeatures() && !system->hasEmulatorSelection())
+				//	continue;
 
 				configuration->addEntry(system->getFullName(), true, [this, system, window] {
 					popSystemConfigurationGui(window, system);

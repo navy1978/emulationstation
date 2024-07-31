@@ -389,7 +389,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 			if (game->getType() != FOLDER)
 			{
-				if (srcSystem->hasFeatures() || srcSystem->hasEmulatorSelection())
+				//if (srcSystem->hasFeatures() || srcSystem->hasEmulatorSelection())
 				{
 					mHasAdvancedGameOptions = true;
 					mMenu.addEntry(_("ADVANCED GAME OPTIONS"), false, [this, game]
