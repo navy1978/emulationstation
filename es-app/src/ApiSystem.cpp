@@ -527,6 +527,16 @@ bool ApiSystem::pairBluetoothDevice(const std::string& deviceName)
 	return executeScript("batocera-bluetooth trust " + deviceName);
 }
 
+bool ApiSystem::connectBluetoothDevice(const std::string& deviceName)
+{
+	return executeScript("batocera-bluetooth connect " + deviceName);
+}
+
+bool ApiSystem::disconnectBluetoothDevice(const std::string& deviceName)
+{
+	return executeScript("batocera-bluetooth disconnect " + deviceName);
+}
+
 bool ApiSystem::removeBluetoothDevice(const std::string& deviceName)
 {
 	return executeScript("batocera-bluetooth remove " + deviceName);
@@ -542,8 +552,7 @@ std::vector<std::string> ApiSystem::getPairedBluetoothDeviceList()
 	return executeEnumerationScript("batocera-bluetooth list");
 }
 
-
-std::vector<std::string> ApiSystem::getAvailableStorageDevices()
+std::vector<std::string> ApiSystem::getAvailableStorageDevices() 
 {
 	return executeEnumerationScript("batocera-config storage list");
 }
