@@ -1022,6 +1022,8 @@ const std::string& CollectionFileData::getName()
 {
 	return mSourceFileData->getName();
 }
+
+
 const std::vector<FileData*> FolderData::getChildrenListToDisplay() 
 {
     std::vector<FileData*> ret;
@@ -1186,7 +1188,51 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
                 LOG(LogInfo) << "File1: " << file1->getFileName() << ", Score: " << s1->second;
             }
             if (s2 != scoringBoard.cend()) {
-                LOG(LogInfo) << "File2: " << file2->getFileName() << ", Score: " << s2->
+                LOG(LogInfo) << "File2: " << file2->getFileName() << ", Score: " << s2->second;
+            }
+
+            if (s1 != scoringBoard.cend() && s2 != scoringBoard.cend() && s1->second != s2->second) {
+                LOG(LogInfo) << "Comparing scores for sorting.";
+                return s1->second < s2->second;
+            }
+            
+            LOG(LogInfo) << "Using custom comparison function for sorting.";
+            return compf(file1, file2);
+        });
+    }
+    else
+    {
+        bool foldersFirst = Settings::ShowFoldersFirst();
+        bool favoritesFirst = getSystem()->getShowFavoritesFirst();
+
+        LOG(LogInfo) << "Sorting with foldersFirst: " << foldersFirst << ", favoritesFirst: " << favoritesFirst;
+
+        std::sort(ret.begin(), ret.end(), [sort, foldersFirst, favoritesFirst](const FileData* file1, const FileData* file2) -> bool
+        {
+            LOG(LogInfo) << "Comparing files for sorting: " << file1->getFileName() << " vs " << file2->getFileName();
+
+            if (favoritesFirst && file1->getFavorite() != file2->getFavorite()) {
+                LOG(LogInfo) << "Sorting by favorites status.";
+                return file1->getFavorite();
+            }
+
+            if (foldersFirst && file1->getType() != file2->getType()) {
+                LOG(LogInfo) << "Sorting by folder status.";
+                return (file1->getType() == FOLDER);
+            }
+
+            // Aggiunto log per controllare l'ordinamento discendente
+            bool result = sort.comparisonFunction(file1, file2) == sort.ascending;
+            LOG(LogInfo) << "Sorting result: " << result << " (ascending: " << sort.ascending << ")";
+
+            return result;
+        });
+    }
+
+    LOG(LogInfo) << "Total items to display: " << ret.size();
+
+    return ret;
+}
 
 
 
