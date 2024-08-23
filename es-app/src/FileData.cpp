@@ -1023,7 +1023,6 @@ const std::string& CollectionFileData::getName()
 	return mSourceFileData->getName();
 }
 
-
 const std::vector<FileData*> FolderData::getChildrenListToDisplay() 
 {
     std::vector<FileData*> ret;
@@ -1082,24 +1081,18 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
             continue;
         }
 
-        // Log per identificare il gioco in esame
-        LOG(LogInfo) << "Analyzing FileData: " << (*it)->getFileName();
-
         if (!showHiddenFiles && (*it)->getHidden()) {
-            LOG(LogInfo) << "Skipping hidden file: " << (*it)->getFileName();
             continue;
         }
 
         if (filterKidGame && (*it)->getType() == GAME && !(*it)->getKidGame()) {
-            LOG(LogInfo) << "Skipping non-kid game: " << (*it)->getFileName();
             continue;
         }
 
-        if (hiddenExts.size() > 0 && (*it)->getType() == GAME)
+        if (!hiddenExts.empty() && (*it)->getType() == GAME)
         {
             std::string extlow = Utils::String::toLower(Utils::FileSystem::getExtension((*it)->getFileName(), false));
             if (std::find(hiddenExts.cbegin(), hiddenExts.cend(), extlow) != hiddenExts.cend()) {
-                LOG(LogInfo) << "Skipping file with hidden extension: " << (*it)->getFileName();
                 continue;
             }
         }
@@ -1108,7 +1101,6 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
         {
             int score = idx->showFile(*it);
             if (score == 0) {
-                LOG(LogInfo) << "Skipping file due to filter index: " << (*it)->getFileName();
                 continue;
             }
 
@@ -1118,13 +1110,7 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
         if ((*it)->getType() == FOLDER && refactorUniqueGameFolders)
         {
             FolderData* pFolder = static_cast<FolderData*>(*it);
-            if (!pFolder) { // Controllo aggiuntivo per puntatore nullo
-                LOG(LogWarning) << "Null FolderData pointer found when casting FileData.";
-                continue;
-            }
-
-            if (pFolder->getChildren().size() == 0) {
-                LOG(LogInfo) << "Skipping empty folder: " << pFolder->getFileName();
+            if (!pFolder || pFolder->getChildren().empty()) {
                 continue;
             }
 
@@ -1133,7 +1119,6 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
                 pFolder->getSourceFileData()->getSystem()->isGroupChildSystem() && 
                 pFolder->getSourceFileData()->getSystem()->getName() == "windows_installers")
             {
-                LOG(LogInfo) << "Adding virtual storage folder: " << pFolder->getFileName();
                 ret.push_back(*it);
                 continue;
             }
@@ -1141,20 +1126,15 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
             auto fd = pFolder->findUniqueGameForFolder();
             if (fd != nullptr)
             {
-                LOG(LogInfo) << "Found unique game in folder: " << fd->getFileName();
-
                 if (idx != nullptr && !idx->showFile(fd)) {
-                    LOG(LogInfo) << "Skipping unique game due to filter index: " << fd->getFileName();
                     continue;
                 }
 
                 if (!showHiddenFiles && fd->getHidden()) {
-                    LOG(LogInfo) << "Skipping hidden unique game: " << fd->getFileName();
                     continue;
                 }
 
                 if (filterKidGame && !fd->getKidGame()) {
-                    LOG(LogInfo) << "Skipping non-kid unique game: " << fd->getFileName();
                     continue;
                 }
 
@@ -1176,27 +1156,22 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
     {
         auto compf = sort.comparisonFunction;
 
-        LOG(LogInfo) << "Sorting by relevance with custom comparison function.";
-
         std::sort(ret.begin(), ret.end(), [scoringBoard, compf](const FileData* file1, const FileData* file2) -> bool
         {
             auto s1 = scoringBoard.find(const_cast<FileData*>(file1));
             auto s2 = scoringBoard.find(const_cast<FileData*>(file2));
 
-            // Aggiunto log per vedere le valutazioni delle partite durante il confronto
             if (s1 != scoringBoard.cend()) {
-                LOG(LogInfo) << "File1: " << file1->getFileName() << ", Score: " << s1->second;
+                LOG(LogInfo) << "File1 score: " << s1->second;
             }
             if (s2 != scoringBoard.cend()) {
-                LOG(LogInfo) << "File2: " << file2->getFileName() << ", Score: " << s2->second;
+                LOG(LogInfo) << "File2 score: " << s2->second;
             }
 
             if (s1 != scoringBoard.cend() && s2 != scoringBoard.cend() && s1->second != s2->second) {
-                LOG(LogInfo) << "Comparing scores for sorting.";
                 return s1->second < s2->second;
             }
             
-            LOG(LogInfo) << "Using custom comparison function for sorting.";
             return compf(file1, file2);
         });
     }
@@ -1205,34 +1180,23 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
         bool foldersFirst = Settings::ShowFoldersFirst();
         bool favoritesFirst = getSystem()->getShowFavoritesFirst();
 
-        LOG(LogInfo) << "Sorting with foldersFirst: " << foldersFirst << ", favoritesFirst: " << favoritesFirst;
-
         std::sort(ret.begin(), ret.end(), [sort, foldersFirst, favoritesFirst](const FileData* file1, const FileData* file2) -> bool
         {
-            LOG(LogInfo) << "Comparing files for sorting: " << file1->getFileName() << " vs " << file2->getFileName();
-
             if (favoritesFirst && file1->getFavorite() != file2->getFavorite()) {
-                LOG(LogInfo) << "Sorting by favorites status.";
                 return file1->getFavorite();
             }
 
             if (foldersFirst && file1->getType() != file2->getType()) {
-                LOG(LogInfo) << "Sorting by folder status.";
                 return (file1->getType() == FOLDER);
             }
 
-            // Aggiunto log per controllare l'ordinamento discendente
-            bool result = sort.comparisonFunction(file1, file2) == sort.ascending;
-            LOG(LogInfo) << "Sorting result: " << result << " (ascending: " << sort.ascending << ")";
-
-            return result;
+            return sort.comparisonFunction(file1, file2) == sort.ascending;
         });
     }
 
-    LOG(LogInfo) << "Total items to display: " << ret.size();
-
     return ret;
 }
+
 
 
 
