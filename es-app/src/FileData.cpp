@@ -1022,216 +1022,172 @@ const std::string& CollectionFileData::getName()
 {
 	return mSourceFileData->getName();
 }
-
 const std::vector<FileData*> FolderData::getChildrenListToDisplay() 
 {
-	std::vector<FileData*> ret;
+    std::vector<FileData*> ret;
 
-	std::string showFoldersMode = getSystem()->getFolderViewMode();
-	
-	bool showHiddenFiles = Settings::ShowHiddenFiles();
+    std::string showFoldersMode = getSystem()->getFolderViewMode();
+    
+    bool showHiddenFiles = Settings::ShowHiddenFiles();
 
-	auto shv = Settings::getInstance()->getString(getSystem()->getName() + ".ShowHiddenFiles");
-	if (shv == "1") showHiddenFiles = true;
-	else if (shv == "0") showHiddenFiles = false;
+    auto shv = Settings::getInstance()->getString(getSystem()->getName() + ".ShowHiddenFiles");
+    if (shv == "1") showHiddenFiles = true;
+    else if (shv == "0") showHiddenFiles = false;
 
-	bool filterKidGame = false;
+    bool filterKidGame = false;
 
-	if (!Settings::getInstance()->getBool("ForceDisableFilters"))
-	{
-		if (UIModeController::getInstance()->isUIModeKiosk())
-			showHiddenFiles = false;
+    if (!Settings::getInstance()->getBool("ForceDisableFilters"))
+    {
+        if (UIModeController::getInstance()->isUIModeKiosk())
+            showHiddenFiles = false;
 
-		if (UIModeController::getInstance()->isUIModeKid())
-			filterKidGame = true;
-	}
+        if (UIModeController::getInstance()->isUIModeKid())
+            filterKidGame = true;
+    }
 
-	auto sys = CollectionSystemManager::get()->getSystemToView(mSystem);
+    auto sys = CollectionSystemManager::get()->getSystemToView(mSystem);
 
-	if (sys == nullptr) { // Aggiunto controllo per sys
-		LOG(LogError) << "System is null in FolderData::getChildrenListToDisplay";
-		return ret;
-	}
+    if (sys == nullptr) { // Aggiunto controllo per sys
+        LOG(LogError) << "System is null in FolderData::getChildrenListToDisplay";
+        return ret;
+    }
 
-	std::vector<std::string> hiddenExts;
-	if (mSystem->isGameSystem() && !mSystem->isCollection())
-		hiddenExts = Utils::String::split(Utils::String::toLower(Settings::getInstance()->getString(mSystem->getName() + ".HiddenExt")), ';');
+    std::vector<std::string> hiddenExts;
+    if (mSystem->isGameSystem() && !mSystem->isCollection())
+        hiddenExts = Utils::String::split(Utils::String::toLower(Settings::getInstance()->getString(mSystem->getName() + ".HiddenExt")), ';');
 
-	FileFilterIndex* idx = sys->getIndex(false);
-	if (idx != nullptr && !idx->isFiltered())
-		idx = nullptr;
+    FileFilterIndex* idx = sys->getIndex(false);
+    if (idx != nullptr && !idx->isFiltered())
+        idx = nullptr;
 
-	std::vector<FileData*>* items = &mChildren;
-	
-	std::vector<FileData*> flatGameList;
-	if (showFoldersMode == "never")
-	{
-		flatGameList = getFlatGameList(false, sys);
-		items = &flatGameList;		
-	}
+    std::vector<FileData*>* items = &mChildren;
+    
+    std::vector<FileData*> flatGameList;
+    if (showFoldersMode == "never")
+    {
+        flatGameList = getFlatGameList(false, sys);
+        items = &flatGameList;        
+    }
 
-	std::map<FileData*, int> scoringBoard;
+    std::map<FileData*, int> scoringBoard;
 
-	bool refactorUniqueGameFolders = (showFoldersMode == "having multiple games");
+    bool refactorUniqueGameFolders = (showFoldersMode == "having multiple games");
 
-	for (auto it = items->cbegin(); it != items->cend(); it++)
-	{
-		if (!(*it)) {  // Controllo aggiuntivo per puntatore nullo
-			LOG(LogWarning) << "Null FileData pointer found in items list.";
-			continue;
-		}
+    for (auto it = items->cbegin(); it != items->cend(); it++)
+    {
+        if (!(*it)) {  // Controllo aggiuntivo per puntatore nullo
+            LOG(LogWarning) << "Null FileData pointer found in items list.";
+            continue;
+        }
 
-		// Log per identificare il gioco in esame
-		LOG(LogInfo) << "Analyzing FileData: " << (*it)->getFileName();
+        // Log per identificare il gioco in esame
+        LOG(LogInfo) << "Analyzing FileData: " << (*it)->getFileName();
 
-		if (!showHiddenFiles && (*it)->getHidden()) {
-			LOG(LogInfo) << "Skipping hidden file: " << (*it)->getFileName();
-			continue;
-		}
+        if (!showHiddenFiles && (*it)->getHidden()) {
+            LOG(LogInfo) << "Skipping hidden file: " << (*it)->getFileName();
+            continue;
+        }
 
-		if (filterKidGame && (*it)->getType() == GAME && !(*it)->getKidGame()) {
-			LOG(LogInfo) << "Skipping non-kid game: " << (*it)->getFileName();
-			continue;
-		}
+        if (filterKidGame && (*it)->getType() == GAME && !(*it)->getKidGame()) {
+            LOG(LogInfo) << "Skipping non-kid game: " << (*it)->getFileName();
+            continue;
+        }
 
-		if (hiddenExts.size() > 0 && (*it)->getType() == GAME)
-		{
-			std::string extlow = Utils::String::toLower(Utils::FileSystem::getExtension((*it)->getFileName(), false));
-			if (std::find(hiddenExts.cbegin(), hiddenExts.cend(), extlow) != hiddenExts.cend()) {
-				LOG(LogInfo) << "Skipping file with hidden extension: " << (*it)->getFileName();
-				continue;
-			}
-		}
+        if (hiddenExts.size() > 0 && (*it)->getType() == GAME)
+        {
+            std::string extlow = Utils::String::toLower(Utils::FileSystem::getExtension((*it)->getFileName(), false));
+            if (std::find(hiddenExts.cbegin(), hiddenExts.cend(), extlow) != hiddenExts.cend()) {
+                LOG(LogInfo) << "Skipping file with hidden extension: " << (*it)->getFileName();
+                continue;
+            }
+        }
 
-		if (idx != nullptr)
-		{
-			int score = idx->showFile(*it);
-			if (score == 0) {
-				LOG(LogInfo) << "Skipping file due to filter index: " << (*it)->getFileName();
-				continue;
-			}
+        if (idx != nullptr)
+        {
+            int score = idx->showFile(*it);
+            if (score == 0) {
+                LOG(LogInfo) << "Skipping file due to filter index: " << (*it)->getFileName();
+                continue;
+            }
 
-			scoringBoard[*it] = score;
-		}
+            scoringBoard[*it] = score;
+        }
 
-		if ((*it)->getType() == FOLDER && refactorUniqueGameFolders)
-		{
-			FolderData* pFolder = static_cast<FolderData*>(*it);
-			if (!pFolder) { // Controllo aggiuntivo per puntatore nullo
-				LOG(LogWarning) << "Null FolderData pointer found when casting FileData.";
-				continue;
-			}
+        if ((*it)->getType() == FOLDER && refactorUniqueGameFolders)
+        {
+            FolderData* pFolder = static_cast<FolderData*>(*it);
+            if (!pFolder) { // Controllo aggiuntivo per puntatore nullo
+                LOG(LogWarning) << "Null FolderData pointer found when casting FileData.";
+                continue;
+            }
 
-			if (pFolder->getChildren().size() == 0) {
-				LOG(LogInfo) << "Skipping empty folder: " << pFolder->getFileName();
-				continue;
-			}
+            if (pFolder->getChildren().size() == 0) {
+                LOG(LogInfo) << "Skipping empty folder: " << pFolder->getFileName();
+                continue;
+            }
 
-			if (pFolder->isVirtualStorage() && pFolder->getSourceFileData() && 
-				pFolder->getSourceFileData()->getSystem() && 
-				pFolder->getSourceFileData()->getSystem()->isGroupChildSystem() && 
-				pFolder->getSourceFileData()->getSystem()->getName() == "windows_installers")
-			{
-				LOG(LogInfo) << "Adding virtual storage folder: " << pFolder->getFileName();
-				ret.push_back(*it);
-				continue;
-			}
+            if (pFolder->isVirtualStorage() && pFolder->getSourceFileData() && 
+                pFolder->getSourceFileData()->getSystem() && 
+                pFolder->getSourceFileData()->getSystem()->isGroupChildSystem() && 
+                pFolder->getSourceFileData()->getSystem()->getName() == "windows_installers")
+            {
+                LOG(LogInfo) << "Adding virtual storage folder: " << pFolder->getFileName();
+                ret.push_back(*it);
+                continue;
+            }
 
-			auto fd = pFolder->findUniqueGameForFolder();
-			if (fd != nullptr)
-			{
-				LOG(LogInfo) << "Found unique game in folder: " << fd->getFileName();
+            auto fd = pFolder->findUniqueGameForFolder();
+            if (fd != nullptr)
+            {
+                LOG(LogInfo) << "Found unique game in folder: " << fd->getFileName();
 
-				if (idx != nullptr && !idx->showFile(fd)) {
-					LOG(LogInfo) << "Skipping unique game due to filter index: " << fd->getFileName();
-					continue;
-				}
+                if (idx != nullptr && !idx->showFile(fd)) {
+                    LOG(LogInfo) << "Skipping unique game due to filter index: " << fd->getFileName();
+                    continue;
+                }
 
-				if (!showHiddenFiles && fd->getHidden()) {
-					LOG(LogInfo) << "Skipping hidden unique game: " << fd->getFileName();
-					continue;
-				}
+                if (!showHiddenFiles && fd->getHidden()) {
+                    LOG(LogInfo) << "Skipping hidden unique game: " << fd->getFileName();
+                    continue;
+                }
 
-				if (filterKidGame && !fd->getKidGame()) {
-					LOG(LogInfo) << "Skipping non-kid unique game: " << fd->getFileName();
-					continue;
-				}
+                if (filterKidGame && !fd->getKidGame()) {
+                    LOG(LogInfo) << "Skipping non-kid unique game: " << fd->getFileName();
+                    continue;
+                }
 
-				ret.push_back(fd);
-				continue;
-			}
-		}
+                ret.push_back(fd);
+                continue;
+            }
+        }
 
-		ret.push_back(*it);
-	}
+        ret.push_back(*it);
+    }
 
-	unsigned int currentSortId = sys->getSortId();
-	if (currentSortId > FileSorts::getSortTypes().size())
-		currentSortId = 0;
+    unsigned int currentSortId = sys->getSortId();
+    if (currentSortId >= FileSorts::getSortTypes().size())
+        currentSortId = 0;
 
-	const FileSorts::SortType& sort = FileSorts::getSortTypes().at(currentSortId);
+    const FileSorts::SortType& sort = FileSorts::getSortTypes().at(currentSortId);
 
-	if (idx != nullptr && idx->hasRelevency())
-	{
-		auto compf = sort.comparisonFunction;
+    if (idx != nullptr && idx->hasRelevency())
+    {
+        auto compf = sort.comparisonFunction;
 
-		LOG(LogInfo) << "Sorting by relevance with custom comparison function.";
+        LOG(LogInfo) << "Sorting by relevance with custom comparison function.";
 
-		std::sort(ret.begin(), ret.end(), [scoringBoard, compf](const FileData* file1, const FileData* file2) -> bool
-		{
-			auto s1 = scoringBoard.find(const_cast<FileData*>(file1));
-			auto s2 = scoringBoard.find(const_cast<FileData*>(file2));
+        std::sort(ret.begin(), ret.end(), [scoringBoard, compf](const FileData* file1, const FileData* file2) -> bool
+        {
+            auto s1 = scoringBoard.find(const_cast<FileData*>(file1));
+            auto s2 = scoringBoard.find(const_cast<FileData*>(file2));
 
-			// Aggiunto log per vedere le valutazioni delle partite durante il confronto
-			if (s1 != scoringBoard.cend()) {
-				LOG(LogInfo) << "File1: " << file1->getFileName() << ", Score: " << s1->second;
-			}
-			if (s2 != scoringBoard.cend()) {
-				LOG(LogInfo) << "File2: " << file2->getFileName() << ", Score: " << s2->second;
-			}
+            // Aggiunto log per vedere le valutazioni delle partite durante il confronto
+            if (s1 != scoringBoard.cend()) {
+                LOG(LogInfo) << "File1: " << file1->getFileName() << ", Score: " << s1->second;
+            }
+            if (s2 != scoringBoard.cend()) {
+                LOG(LogInfo) << "File2: " << file2->getFileName() << ", Score: " << s2->
 
-			if (s1 != scoringBoard.cend() && s2 != scoringBoard.cend() && s1->second != s2->second) {
-				LOG(LogInfo) << "Comparing scores for sorting.";
-				return s1->second < s2->second;
-			}
-			
-			LOG(LogInfo) << "Using custom comparison function for sorting.";
-			return compf(file1, file2);
-		});
-	}
-	else
-	{
-		bool foldersFirst = Settings::ShowFoldersFirst();
-		bool favoritesFirst = getSystem()->getShowFavoritesFirst();
-
-		LOG(LogInfo) << "Sorting with foldersFirst: " << foldersFirst << ", favoritesFirst: " << favoritesFirst;
-
-		std::sort(ret.begin(), ret.end(), [sort, foldersFirst, favoritesFirst](const FileData* file1, const FileData* file2) -> bool
-		{
-			LOG(LogInfo) << "Comparing files for sorting: " << file1->getFileName() << " vs " << file2->getFileName();
-
-			if (favoritesFirst && file1->getFavorite() != file2->getFavorite()) {
-				LOG(LogInfo) << "Sorting by favorites status.";
-				return file1->getFavorite();
-			}
-
-			if (foldersFirst && file1->getType() != file2->getType()) {
-				LOG(LogInfo) << "Sorting by folder status.";
-				return (file1->getType() == FOLDER);
-			}
-
-			// Aggiunto log per controllare l'ordinamento discendente
-			bool result = sort.comparisonFunction(file1, file2) == sort.ascending;
-			LOG(LogInfo) << "Sorting result: " << result << " (ascending: " << sort.ascending << ")";
-
-			return result;
-		});
-	}
-
-	LOG(LogInfo) << "Total items to display: " << ret.size();
-
-	return ret;
-}
 
 
 std::shared_ptr<std::vector<FileData*>> FolderData::findChildrenListToDisplayAtCursor(FileData* toFind, std::stack<FileData*>& stack)
