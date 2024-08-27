@@ -1023,6 +1023,63 @@ const std::string& CollectionFileData::getName()
 	return mSourceFileData->getName();
 }
 
+std::string getSafeName(const FileData* file) {
+    return const_cast<FileData*>(file)->getName(); // Usa const_cast per chiamare getName()
+}
+
+
+static FileSorts::SortType globalSortType(0, nullptr, true, "Default Sort", "defaultIcon");
+
+static bool globalAscending;
+
+
+
+
+bool compareFiles(const FileData* file1, const FileData* file2) {
+    bool result = globalSortType.comparisonFunction(file1, file2);
+    return globalAscending ? result : !result;
+}
+
+void sortInChunks(std::vector<FileData*>& data, const FileSorts::SortType& sort, bool ascending) {
+    const size_t chunkSize = 1000; 
+    std::vector<FileData*> temp;
+
+    
+    if (!sort.comparisonFunction) {
+        std::cerr << "Comparison function is null!" << std::endl;
+        return;
+    }
+
+    for (size_t i = 0; i < data.size(); i += chunkSize) {
+        size_t end = std::min(i + chunkSize, data.size());
+        temp.assign(data.begin() + i, data.begin() + end);
+
+        // Bubble Sort
+		for (size_t j = 0; j < temp.size(); ++j) {
+    for (size_t k = 0; k < temp.size() - j - 1; ++k) {
+        bool comparisonResult = sort.comparisonFunction(temp[k], temp[k + 1]);
+        
+        // sorting "ascending"
+        if (ascending) {
+            // if ascending and the first is bigger then the second swap
+            if (!comparisonResult) {
+                std::swap(temp[k], temp[k + 1]);
+            }
+        } else {
+            // if descending and the first is smaller then the second swap
+            if (comparisonResult) {
+                std::swap(temp[k], temp[k + 1]);
+            }
+        }
+    }
+}
+        std::copy(temp.begin(), temp.end(), data.begin() + i);
+    }
+}
+
+
+
+
 const std::vector<FileData*> FolderData::getChildrenListToDisplay() 
 {
     std::vector<FileData*> ret;
@@ -1048,11 +1105,6 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
 
     auto sys = CollectionSystemManager::get()->getSystemToView(mSystem);
 
-    if (sys == nullptr) { // Aggiunto controllo per sys
-        LOG(LogError) << "System is null in FolderData::getChildrenListToDisplay";
-        return ret;
-    }
-
     std::vector<std::string> hiddenExts;
     if (mSystem->isGameSystem() && !mSystem->isCollection())
         hiddenExts = Utils::String::split(Utils::String::toLower(Settings::getInstance()->getString(mSystem->getName() + ".HiddenExt")), ';');
@@ -1076,48 +1128,35 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
 
     for (auto it = items->cbegin(); it != items->cend(); it++)
     {
-        if (!(*it)) {  // Controllo aggiuntivo per puntatore nullo
-            LOG(LogWarning) << "Null FileData pointer found in items list.";
+        if (!showHiddenFiles && (*it)->getHidden())
             continue;
-        }
 
-        if (!showHiddenFiles && (*it)->getHidden()) {
+        if (filterKidGame && (*it)->getType() == GAME && !(*it)->getKidGame())
             continue;
-        }
 
-        if (filterKidGame && (*it)->getType() == GAME && !(*it)->getKidGame()) {
-            continue;
-        }
-
-        if (!hiddenExts.empty() && (*it)->getType() == GAME)
+        if (hiddenExts.size() > 0 && (*it)->getType() == GAME)
         {
             std::string extlow = Utils::String::toLower(Utils::FileSystem::getExtension((*it)->getFileName(), false));
-            if (std::find(hiddenExts.cbegin(), hiddenExts.cend(), extlow) != hiddenExts.cend()) {
+            if (std::find(hiddenExts.cbegin(), hiddenExts.cend(), extlow) != hiddenExts.cend())
                 continue;
-            }
         }
 
         if (idx != nullptr)
         {
             int score = idx->showFile(*it);
-            if (score == 0) {
+            if (score == 0)
                 continue;
-            }
 
             scoringBoard[*it] = score;
         }
 
         if ((*it)->getType() == FOLDER && refactorUniqueGameFolders)
         {
-            FolderData* pFolder = static_cast<FolderData*>(*it);
-            if (!pFolder || pFolder->getChildren().empty()) {
+            FolderData* pFolder = (FolderData*)(*it);
+            if (pFolder->getChildren().size() == 0)
                 continue;
-            }
 
-            if (pFolder->isVirtualStorage() && pFolder->getSourceFileData() && 
-                pFolder->getSourceFileData()->getSystem() && 
-                pFolder->getSourceFileData()->getSystem()->isGroupChildSystem() && 
-                pFolder->getSourceFileData()->getSystem()->getName() == "windows_installers")
+            if (pFolder->isVirtualStorage() && pFolder->getSourceFileData()->getSystem()->isGroupChildSystem() && pFolder->getSourceFileData()->getSystem()->getName() == "windows_installers")
             {
                 ret.push_back(*it);
                 continue;
@@ -1126,19 +1165,17 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
             auto fd = pFolder->findUniqueGameForFolder();
             if (fd != nullptr)
             {
-                if (idx != nullptr && !idx->showFile(fd)) {
+                if (idx != nullptr && !idx->showFile(fd))
                     continue;
-                }
 
-                if (!showHiddenFiles && fd->getHidden()) {
+                if (!showHiddenFiles && fd->getHidden())
                     continue;
-                }
 
-                if (filterKidGame && !fd->getKidGame()) {
+                if (filterKidGame && !fd->getKidGame())
                     continue;
-                }
 
                 ret.push_back(fd);
+
                 continue;
             }
         }
@@ -1151,52 +1188,24 @@ const std::vector<FileData*> FolderData::getChildrenListToDisplay()
         currentSortId = 0;
 
     const FileSorts::SortType& sort = FileSorts::getSortTypes().at(currentSortId);
+    bool ascending = sort.ascending;
 
     if (idx != nullptr && idx->hasRelevency())
     {
-        auto compf = sort.comparisonFunction;
-
-        std::sort(ret.begin(), ret.end(), [scoringBoard, compf](const FileData* file1, const FileData* file2) -> bool
-        {
-            auto s1 = scoringBoard.find(const_cast<FileData*>(file1));
-            auto s2 = scoringBoard.find(const_cast<FileData*>(file2));
-
-            if (s1 != scoringBoard.cend()) {
-                LOG(LogInfo) << "File1 score: " << s1->second;
-            }
-            if (s2 != scoringBoard.cend()) {
-                LOG(LogInfo) << "File2 score: " << s2->second;
-            }
-
-            if (s1 != scoringBoard.cend() && s2 != scoringBoard.cend() && s1->second != s2->second) {
-                return s1->second < s2->second;
-            }
-            
-            return compf(file1, file2);
-        });
+        // Sort in chunks
+        sortInChunks(ret, sort, ascending);
     }
     else
     {
         bool foldersFirst = Settings::ShowFoldersFirst();
         bool favoritesFirst = getSystem()->getShowFavoritesFirst();
 
-        std::sort(ret.begin(), ret.end(), [sort, foldersFirst, favoritesFirst](const FileData* file1, const FileData* file2) -> bool
-        {
-            if (favoritesFirst && file1->getFavorite() != file2->getFavorite()) {
-                return file1->getFavorite();
-            }
-
-            if (foldersFirst && file1->getType() != file2->getType()) {
-                return (file1->getType() == FOLDER);
-            }
-
-            return sort.comparisonFunction(file1, file2) == sort.ascending;
-        });
+        // Sort in chunks
+        sortInChunks(ret, sort, ascending);
     }
 
     return ret;
 }
-
 
 
 
