@@ -313,7 +313,7 @@ void Settings::setDefaults()
 	// Audio out device for volume control
 	#ifdef _RPI_
 		mStringMap["AudioDevice"] = "PCM";
-	#elif defined(_ENABLEAMBERELEC) && defined(RG552)
+	#elif defined(_ENABLEAMBERELEC) && (defined(RG552) || defined(RG353))
 		mStringMap["AudioDevice"] = "DAC";
 	#elif defined(_ENABLEAMBERELEC)
 		mStringMap["AudioDevice"] = "Playback";
