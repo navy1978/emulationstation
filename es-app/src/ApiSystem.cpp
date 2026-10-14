@@ -872,6 +872,8 @@ std::string ApiSystem::getThemesUrl()
 
 #ifdef RG353
 	return "https://github.com/AmberELEC/metadata/raw/main/RG351MP/themes.json";
+#elif defined(RG503)
+	return "https://github.com/AmberELEC/metadata/raw/main/RG552/themes.json";
 #else
 	return getUpdateUrl() + "/themes.json";
 #endif
